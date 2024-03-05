@@ -3,7 +3,7 @@ package view.data;
 /**
  * @author MiskuZero
  */
-public interface AlgoList<E> extends AlgoData {
+public interface AlgoList<E> extends AlgoData<E> {
 
     /**
      * 返回元素总数

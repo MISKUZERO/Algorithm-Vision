@@ -3,5 +3,5 @@ package view.data;
 /**
  * @author MiskuZero
  */
-public interface AlgoData {
+public interface AlgoData<E> {
 }

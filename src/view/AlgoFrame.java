@@ -5,31 +5,36 @@ import view.data.AlgoArray;
 import view.data.AlgoData;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author MiskuZero
  */
 public class AlgoFrame extends JFrame {
 
-    private final ArrayCanvas canvas;
+    private final ArrayCanvas[] canvas;
+    private final int canvasCount;
 
-    public AlgoFrame(String title, int canvasWidth, int canvasHeight) {
-
+    public AlgoFrame(String title, int panelWidth, int panelHeight, int canvasCount) {
         super(title);
-
-        canvas = new ArrayCanvas(canvasWidth, canvasHeight, new AlgoArray());
-        setContentPane(canvas);
-        pack();
-
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
+        setLayout(new GridLayout());
+        canvas = new ArrayCanvas[canvasCount];
+        this.canvasCount = canvasCount;
+        for (int i = 0; i < canvasCount; i++) {
+            canvas[i] = new ArrayCanvas(panelWidth, panelHeight, new AlgoArray());
+            add(canvas[i]);
+        }
+        pack();
         setLocationRelativeTo(null);
-
+        setResizable(false);
         setVisible(true);
     }
 
-    public void render(AlgoData<Integer> data) {
-        canvas.updateData(data);
+    public void render(AlgoData[] data) {
+        for (int i = 0; i < canvasCount; i++) {
+            canvas[i].updateData(data[i]);
+        }
         repaint();
     }
 

@@ -51,7 +51,7 @@ public class ArrayCanvas extends JPanel implements AlgoCanvas<Integer> {
     }
 
     @Override
-    public void updateData(AlgoData<Integer> data) {
+    public void updateData(AlgoData data) {
         this.list = (AlgoArray) data;
     }
 }

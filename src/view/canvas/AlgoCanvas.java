@@ -11,5 +11,5 @@ public interface AlgoCanvas<E> {
      *
      * @param data 数据
      */
-    void updateData(AlgoData<E> data);
+    void updateData(AlgoData data);
 }

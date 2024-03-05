@@ -36,11 +36,11 @@ public class ArrayCanvas extends JPanel implements AlgoCanvas<Integer> {
         g2d.addRenderingHints(hints);
         // 具体绘制
         AlgoArray algoList = list;
-        int size = algoList.size();
-        if (size == 0) return;
-        int w = width / size;
+        int capacity = algoList.capacity();
+        if (capacity == 0) return;
+        int w = width / capacity;
         g2d.setColor(Color.GRAY);
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < capacity; i++) {
             g2d.fillRect(i * w, height - algoList.get(i), w - 1, algoList.get(i));
         }
     }

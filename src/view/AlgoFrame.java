@@ -5,6 +5,7 @@ import view.data.AlgoArray;
 import view.data.AlgoData;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 
 /**
@@ -23,6 +24,7 @@ public class AlgoFrame extends JFrame {
         this.canvasCount = canvasCount;
         for (int i = 0; i < canvasCount; i++) {
             canvas[i] = new ArrayCanvas(panelWidth, panelHeight, new AlgoArray());
+            canvas[i].setBorder(new LineBorder(Color.BLACK));
             add(canvas[i]);
         }
         pack();

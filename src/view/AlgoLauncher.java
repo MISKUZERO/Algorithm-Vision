@@ -4,21 +4,26 @@ import random.SquareMid;
 import view.data.AlgoArray;
 import view.data.AlgoData;
 
+import java.util.Random;
+
 /**
  * @author MiskuZero
  */
 public class AlgoLauncher {
 
-    private static final int N = 200;
-    private static final int DELAY = 2;
-    private static final int SCENE_WIDTH = 1920;
-    private static final int SCENE_HEIGHT = 1080;
+    private static final int DELAY = 1;
+    private static final int TEST_COUNT = 20000;
+    private static final int N = 500;
+    private static final int SCALE = 2;
+    private static final int SCENE_WIDTH = 2000;
+    private static final int SCENE_HEIGHT = 1000;
+    private static final int CANVAS_COUNT = 2;
+    private static final AlgoData[] DATA = new AlgoData[CANVAS_COUNT];
     private static final String TITLE = "Algo Visualization";
-    private static final AlgoData[] DATA = new AlgoData[2];
     private static AlgoFrame FRAME;
 
     public static void run() {
-        FRAME = new AlgoFrame(TITLE, SCENE_WIDTH / DATA.length, SCENE_HEIGHT, 2);
+        FRAME = new AlgoFrame(TITLE, SCENE_WIDTH / CANVAS_COUNT, SCENE_HEIGHT, CANVAS_COUNT);
         new Thread(() -> {
             AlgoArray data = new AlgoArray(N);
             DATA[0] = data;
@@ -30,30 +35,19 @@ public class AlgoLauncher {
     }
 
     private static void threadWork(AlgoArray data) {
-        for (int i = 0; i < N; i++) {
+        Random random = new Random();
+        for (int i = 0; i < TEST_COUNT; i++) {
+            int r = random.nextInt(TEST_COUNT) % N;
+            data.set(r, data.get(r) + SCALE);
             update();
-            data.add(i, SquareMid.nextInt(SCENE_HEIGHT) + 1);
         }
-        for (int i = 0; i < data.size(); i++) {
-            update();
-            for (int j = i; j > 0 && data.get(j) < data.get(j - 1); j--) {
-                Integer t = data.get(j);
-                data.set(j, data.get(j - 1));
-                data.set(j - 1, t);
-                update();
-            }
-        }
-        for (int i = 0; i < N; i++) {
-            update();
-            data.remove(0);
-        }
-        update();
     }
 
     private static void threadWork1(AlgoArray data) {
-        for (int i = 0; i < N; i++) {
+        for (int i = 0; i < TEST_COUNT; i++) {
+            int r = SquareMid.nextInt(TEST_COUNT) % N;
+            data.set(r, data.get(r) + SCALE);
             update();
-            data.add(i, SquareMid.nextInt(SCENE_HEIGHT) + 1);
         }
     }
 

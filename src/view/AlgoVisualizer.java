@@ -1,12 +1,13 @@
 package view;
 
 import random.SquareMid;
+import view.data.AlgoArrayList;
+import view.data.AlgoList;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 /**
- * @author Administrator
+ * @author MiskuZero
  */
 public class AlgoVisualizer {
 
@@ -14,13 +15,13 @@ public class AlgoVisualizer {
     private static final int DELAY = 20;
     private final int SCENE_WIDTH = 1600;
     private final int SCENE_HEIGHT = 800;
-    private final ArrayList<Integer> data = new ArrayList<>();
+    private final AlgoList<Integer> data = new AlgoArrayList();
     private AlgoFrame frame;
 
     public AlgoVisualizer() {
         // 初始化视图
         EventQueue.invokeLater(() -> {
-            frame = new AlgoFrame("Array Visualization", SCENE_WIDTH, SCENE_HEIGHT);
+            frame = new AlgoFrame("Algo Visualization", SCENE_WIDTH, SCENE_HEIGHT);
             new Thread(this::run).start();
         });
     }
@@ -28,21 +29,25 @@ public class AlgoVisualizer {
     public void run() {
         for (int i = 0; i < N; i++) {
             update();
-            data.add(SquareMid.nextInt(SCENE_HEIGHT));
+            try {
+                data.add(SquareMid.nextInt(SCENE_HEIGHT));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
-//        for (int i = 0; i < data.size(); i++) {
-//            update();
-//            for (int j = i; j > 0 && data.get(j) < data.get(j - 1); j--) {
-//                Integer t = data.get(j);
-//                data.set(j, data.get(j - 1));
-//                data.set(j - 1, t);
-//                update();
-//            }
-//        }
-//        for (int i = 0; i < N; i++) {
-//            data.remove(0);
+        for (int i = 0; i < data.size(); i++) {
             update();
-//        }
+            for (int j = i; j > 0 && data.get(j) < data.get(j - 1); j--) {
+                Integer t = data.get(j);
+                data.set(j, data.get(j - 1));
+                data.set(j - 1, t);
+                update();
+            }
+        }
+        for (int i = 0; i < N; i++) {
+            data.remove(0);
+            update();
+        }
     }
 
     private void update() {

@@ -1,11 +1,12 @@
 package view;
 
+import view.data.AlgoList;
+
 import java.awt.*;
-import java.util.ArrayList;
 import javax.swing.*;
 
 /**
- * @author Administrator
+ * @author MiskuZero
  */
 public class AlgoFrame extends JFrame {
 
@@ -31,9 +32,9 @@ public class AlgoFrame extends JFrame {
     }
 
 
-    private ArrayList<Integer> data;
+    private AlgoList<Integer> data;
 
-    public void render(ArrayList<Integer> data) {
+    public void render(AlgoList<Integer> data) {
         this.data = data;
         repaint();
     }

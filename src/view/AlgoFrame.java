@@ -19,12 +19,41 @@ public class AlgoFrame extends JFrame {
     public AlgoFrame(String title, int panelWidth, int panelHeight, int canvasCount) {
         super(title);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new GridLayout());
+        setLayout(new GridLayout(1, 2));
         canvas = new ArrayCanvas[canvasCount];
         this.canvasCount = canvasCount;
         for (int i = 0; i < canvasCount; i++) {
-            canvas[i] = new ArrayCanvas(panelWidth, panelHeight, new AlgoArray());
-            canvas[i].setBorder(new LineBorder(Color.BLACK));
+            int finalI = i;
+            canvas[i] = new ArrayCanvas(panelWidth, panelHeight, new AlgoArray()) {
+                private final JLabel value = new JLabel();
+                private final JLabel sample = new JLabel();
+                private int inCycle = 0;
+                private int count = 1;
+
+                {
+                    setLayout(new GridLayout(24, 1));
+                    setBorder(new LineBorder(Color.BLACK));
+                    value.setForeground(Color.BLUE);
+                    value.setFont(new Font("Default", Font.PLAIN, 32));
+                    add(value);
+                    sample.setForeground(Color.BLUE);
+                    sample.setFont(new Font("Default", Font.PLAIN, 32));
+                    add(sample);
+                    pack();
+                }
+
+                @Override
+                public void updateData(AlgoData data, int index) {
+                    super.updateData(data, index);
+                    int c = count++;
+                    AlgoArray array = (AlgoArray) data;
+                    int num = array.get(index);
+                    if (num * num + num * num < 500 * 500)
+                        inCycle++;
+                    value.setText("  算法" + finalI + "：π ~ " + (((double) inCycle) / c));
+                    sample.setText("  样本数量：" + c);
+                }
+            };
             add(canvas[i]);
         }
         pack();
@@ -33,9 +62,9 @@ public class AlgoFrame extends JFrame {
         setVisible(true);
     }
 
-    public void render(AlgoData[] data) {
+    public void render(AlgoData[] data, int index) {
         for (int i = 0; i < canvasCount; i++) {
-            canvas[i].updateData(data[i]);
+            canvas[i].updateData(data[i], index);
         }
         repaint();
     }

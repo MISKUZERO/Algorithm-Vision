@@ -9,7 +9,7 @@ import java.awt.*;
 /**
  * @author MiskuZero
  */
-public class ArrayCanvas extends JPanel implements AlgoCanvas<Integer> {
+public class ArrayCanvas extends JPanel {
 
     private final int width;
     private final int height;
@@ -50,8 +50,7 @@ public class ArrayCanvas extends JPanel implements AlgoCanvas<Integer> {
         return new Dimension(width, height);
     }
 
-    @Override
-    public void updateData(AlgoData data) {
+    public void updateData(AlgoData data, int index) {
         this.list = (AlgoArray) data;
     }
 }

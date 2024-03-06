@@ -6,6 +6,6 @@ import view.AlgoLauncher;
 public class Test {
 
     public static void main(String[] args) {
-        AlgoLauncher.run();
+        AlgoLauncher.launch();
     }
 }

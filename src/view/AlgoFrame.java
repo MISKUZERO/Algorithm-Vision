@@ -14,17 +14,16 @@ import java.awt.*;
 public class AlgoFrame extends JFrame {
 
     private final ArrayCanvas[] canvas;
-    private final int canvasCount;
 
     public AlgoFrame(String title, int panelWidth, int panelHeight, int canvasCount) {
         super(title);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridLayout(1, 2));
         canvas = new ArrayCanvas[canvasCount];
-        this.canvasCount = canvasCount;
         for (int i = 0; i < canvasCount; i++) {
-            int finalI = i;
+            int j = i;
             canvas[i] = new ArrayCanvas(panelWidth, panelHeight, new AlgoArray()) {
+                private final int id = j;
                 private final JLabel value = new JLabel();
                 private final JLabel sample = new JLabel();
                 private int inCycle = 0;
@@ -46,11 +45,9 @@ public class AlgoFrame extends JFrame {
                 public void updateData(AlgoData data, int index) {
                     super.updateData(data, index);
                     int c = count++;
-                    AlgoArray array = (AlgoArray) data;
-                    int num = array.get(index);
-                    if (num * num + num * num < 500 * 500)
+                    if (index * index + index * index < 500 * 500)
                         inCycle++;
-                    value.setText(" 算法" + finalI + "：π ≈ " + (((double) inCycle) / c));
+                    value.setText(" 算法" + id + "：π ≈ " + (((double) inCycle) / c));
                     sample.setText(" 样本数量：" + c);
                 }
             };
@@ -62,10 +59,8 @@ public class AlgoFrame extends JFrame {
         setVisible(true);
     }
 
-    public void render(AlgoData[] data, int index) {
-        for (int i = 0; i < canvasCount; i++) {
-            canvas[i].updateData(data[i], index);
-        }
+    public void render(int tid, AlgoData data, int index) {
+        canvas[tid].updateData(data, index);
         repaint();
     }
 

@@ -33,11 +33,11 @@ public class AlgoFrame extends JFrame {
                 {
                     setLayout(new GridLayout(24, 1));
                     setBorder(new LineBorder(Color.BLACK));
-                    value.setForeground(Color.BLUE);
-                    value.setFont(new Font("Default", Font.PLAIN, 32));
+                    value.setForeground(Color.WHITE);
+                    value.setFont(new Font("楷体", Font.PLAIN, 32));
                     add(value);
-                    sample.setForeground(Color.BLUE);
-                    sample.setFont(new Font("Default", Font.PLAIN, 32));
+                    sample.setForeground(Color.WHITE);
+                    sample.setFont(new Font("楷体", Font.PLAIN, 32));
                     add(sample);
                     pack();
                 }
@@ -50,8 +50,8 @@ public class AlgoFrame extends JFrame {
                     int num = array.get(index);
                     if (num * num + num * num < 500 * 500)
                         inCycle++;
-                    value.setText("  算法" + finalI + "：π ~ " + (((double) inCycle) / c));
-                    sample.setText("  样本数量：" + c);
+                    value.setText(" 算法" + finalI + "：π ≈ " + (((double) inCycle) / c));
+                    sample.setText(" 样本数量：" + c);
                 }
             };
             add(canvas[i]);

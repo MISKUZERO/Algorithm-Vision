@@ -32,7 +32,6 @@ public class AlgoFrame extends JFrame {
 
     public void render(int tid, AlgoData data, int index) {
         canvas[tid].updateData(data, index);
-        repaint();
     }
 
 }

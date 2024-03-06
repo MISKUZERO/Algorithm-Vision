@@ -40,8 +40,8 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
         add(sample);
         bufferedImage = new BufferedImage(width, height, 1);
         Graphics graphics = bufferedImage.getGraphics();
-        graphics.setColor(Color.WHITE);
-        graphics.fillOval(0, 0, 2000, 2000);
+        graphics.setColor(Color.CYAN);
+        graphics.drawOval(1, 1, width << 1, height << 1);
     }
 
     @Override
@@ -58,11 +58,8 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
         Graphics graphics = bufferedImage.getGraphics();
         int x = (int) (Math.random() * width);
         int y = (int) (Math.random() * height);
-        if ((x - 1000) * (x - 1000) + (y - 1000) * (y - 1000) < 1000 * 1000)
-            graphics.setColor(Color.BLACK);
-        else
-            graphics.setColor(Color.YELLOW);
-        graphics.fillRect(x, y, 5, 5);
+        graphics.setColor(Color.YELLOW);
+        graphics.fillRect(x, y, 1, 1);
         g.drawImage(bufferedImage, 0, 0, width, height, null);
         ArrayCanvas.paint(g2d, list, width, height);
     }
@@ -75,6 +72,7 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
             inCycle++;
         value.setText(" 算法" + id + "：π ≈ " + (((double) inCycle) / c));
         sample.setText(" 样本数量：" + c);
+        repaint();
     }
 
     @Override

@@ -1,4 +1,4 @@
-import view.AlgoLauncher;
+import view.AlgoController;
 
 /**
  * @author MiskuZero
@@ -6,6 +6,6 @@ import view.AlgoLauncher;
 public class Test {
 
     public static void main(String[] args) {
-        AlgoLauncher.launch();
+        AlgoController.launch();
     }
 }

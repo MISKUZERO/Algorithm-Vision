@@ -1,4 +1,4 @@
-package view.canvas;
+package view.component;
 
 import view.data.AlgoArray;
 import view.data.AlgoData;
@@ -53,7 +53,7 @@ public class ArrayCanvas extends JPanel implements AlgoCanvas {
     }
 
     @Override
-    public void updateData(AlgoData data, int index) {
+    public void updateData(AlgoData data, Object... args) {
         this.list = (AlgoArray) data;
         repaint();
     }

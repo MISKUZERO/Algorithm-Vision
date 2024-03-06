@@ -1,4 +1,4 @@
-package view.canvas;
+package view.component;
 
 import view.data.AlgoArray;
 import view.data.AlgoData;
@@ -18,6 +18,8 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
     private final int width;
     private final int height;
 
+    private static final int TEXT_SIZE = 32;//文本尺寸
+
     private AlgoArray list;
     private final JLabel value = new JLabel();
     private final JLabel sample = new JLabel();
@@ -30,15 +32,15 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
         this.width = width;
         this.height = height;
         this.list = array;
-        setLayout(new GridLayout(24, 1));
+        setLayout(new GridLayout(height / (TEXT_SIZE * 5 / 4), 1));
         setBorder(new LineBorder(Color.BLACK));
         value.setForeground(Color.WHITE);
-        value.setFont(new Font("楷体", Font.PLAIN, 32));
+        value.setFont(new Font("楷体", Font.PLAIN, TEXT_SIZE));
         add(value);
         sample.setForeground(Color.WHITE);
-        sample.setFont(new Font("楷体", Font.PLAIN, 32));
+        sample.setFont(new Font("楷体", Font.PLAIN, TEXT_SIZE));
         add(sample);
-        bufferedImage = new BufferedImage(width, height, 1);
+        bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics graphics = bufferedImage.getGraphics();
         graphics.setColor(Color.CYAN);
         graphics.drawOval(1, 1, width << 1, height << 1);
@@ -65,10 +67,11 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
     }
 
     @Override
-    public void updateData(AlgoData data, int index) {
+    public void updateData(AlgoData data, Object... args) {
         this.list = (AlgoArray) data;
         int c = ++count;
-        if ((index - 1000) * (index - 1000) + (index - 1000) * (index - 1000) < 1000 * 1000)
+        Integer num = (Integer) args[0];
+        if ((num - 1000) * (num - 1000) + (num - 1000) * (num - 1000) < 1000 * 1000)
             inCycle++;
         value.setText(" 算法" + id + "：π ≈ " + (((double) inCycle) / c));
         sample.setText(" 样本数量：" + c);

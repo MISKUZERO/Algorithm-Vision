@@ -19,7 +19,7 @@ public class AlgoLauncher {
     private static final int DELAY = 1;
     //参数
     private static final int N = 500;//边界
-    private static final int TEST_COUNT = 10000;//重复次数
+    private static final int TEST_COUNT = 50000;//重复次数
     private static final int SCALE = 2;//增量
     private static final int CANVAS_COUNT = 2;//画布数
 

@@ -39,6 +39,9 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
         sample.setFont(new Font("楷体", Font.PLAIN, 32));
         add(sample);
         bufferedImage = new BufferedImage(width, height, 1);
+        Graphics graphics = bufferedImage.getGraphics();
+        graphics.setColor(Color.WHITE);
+        graphics.fillOval(0, 0, 2000, 2000);
     }
 
     @Override
@@ -53,8 +56,13 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
         g2d.addRenderingHints(hints);
         // 具体绘制
         Graphics graphics = bufferedImage.getGraphics();
-        graphics.setColor(Color.YELLOW);
-        graphics.fillRect((int) (Math.random() * width), (int) (Math.random() * height), 1, 1);
+        int x = (int) (Math.random() * width);
+        int y = (int) (Math.random() * height);
+        if ((x - 1000) * (x - 1000) + (y - 1000) * (y - 1000) < 1000 * 1000)
+            graphics.setColor(Color.BLACK);
+        else
+            graphics.setColor(Color.YELLOW);
+        graphics.fillRect(x, y, 5, 5);
         g.drawImage(bufferedImage, 0, 0, width, height, null);
         ArrayCanvas.paint(g2d, list, width, height);
     }
@@ -63,7 +71,7 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
     public void updateData(AlgoData data, int index) {
         this.list = (AlgoArray) data;
         int c = ++count;
-        if (index * index + index * index < 500 * 500)
+        if ((index - 1000) * (index - 1000) + (index - 1000) * (index - 1000) < 1000 * 1000)
             inCycle++;
         value.setText(" 算法" + id + "：π ≈ " + (((double) inCycle) / c));
         sample.setText(" 样本数量：" + c);

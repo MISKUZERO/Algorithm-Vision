@@ -24,8 +24,10 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
     private final JLabel value = new JLabel();
     private final JLabel sample = new JLabel();
     private final BufferedImage bufferedImage;
-    private int inCycle;
+    private int x;
+    private int y;
     private int count;
+    private int inCycle;
 
     public RandomCanvas(int id, int width, int height, AlgoArray array) {
         this.id = id;
@@ -51,15 +53,11 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         // 抗锯齿
-        RenderingHints hints = new RenderingHints(
-                RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
+        RenderingHints hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         hints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.addRenderingHints(hints);
         // 具体绘制
         Graphics graphics = bufferedImage.getGraphics();
-        int x = (int) (Math.random() * width);
-        int y = (int) (Math.random() * height);
         graphics.setColor(Color.YELLOW);
         graphics.fillRect(x, y, 1, 1);
         g.drawImage(bufferedImage, 0, 0, width, height, null);
@@ -70,11 +68,13 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
     public void updateData(AlgoData data, Object... args) {
         this.list = (AlgoArray) data;
         int c = ++count;
-        Integer num = (Integer) args[0];
-        if ((num - 1000) * (num - 1000) + (num - 1000) * (num - 1000) < 1000 * 1000)
+        int r = height;
+        x = (Integer) args[0];
+        y = (Integer) args[1];
+        if (x * x + y * y < r * r)
             inCycle++;
-        value.setText(" 算法" + id + "：π ≈ " + (((double) inCycle) / c));
-        sample.setText(" 样本数量：" + c);
+        value.setText(" 算法" + id + "：π ≈ " + ((double) (inCycle << 2) / c));
+        sample.setText(" 样本总数：" + c);
         repaint();
     }
 

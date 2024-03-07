@@ -8,12 +8,12 @@ public class SquareMid {
     private static long seed = next();
 
     private static int next() {
-        return (int) ((System.nanoTime() & 0x3fffc) * (System.nanoTime() & 0xfffc));
+        return (int) ((System.nanoTime() & 0x3fffc) + (System.nanoTime() & 0xfffc));
     }
 
     public static int next(int bits) {
         long s = seed;
-        if (s == 0)
+        if ((s & (s - 1)) == 0)
             s = next();
         s = ((s * s) << 16) >>> 32;
         seed = s;

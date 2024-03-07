@@ -31,21 +31,23 @@ public class AlgoController {
         new Thread(() -> run1(new AlgoArray(N))).start();
     }
 
-    private static void run(AlgoArray data) {
+    private static void run(AlgoData data) {
         Random random = new Random();
+        AlgoArray arr = (AlgoArray) data;
         for (int i = 0; i < TEST_COUNT; i++) {
-            int r = random.nextInt(TEST_COUNT);
+            int r = random.nextInt(Integer.MAX_VALUE);
             int index = r % N;
-            data.set(index, data.get(index) + SCALE);
+            arr.set(index, arr.get(index) + SCALE);
             update(0, data, r, index);
         }
     }
 
-    private static void run1(AlgoArray data) {
+    private static void run1(AlgoData data) {
+        AlgoArray arr = (AlgoArray) data;
         for (int i = 0; i < TEST_COUNT; i++) {
-            int r = SquareMid.nextInt(TEST_COUNT);
+            int r = SquareMid.nextInt(Integer.MAX_VALUE);
             int index = r % N;
-            data.set(index, data.get(index) + SCALE);
+            arr.set(index, arr.get(index) + SCALE);
             update(1, data, r, index);
         }
     }

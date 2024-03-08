@@ -63,19 +63,21 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
         graphics.setColor(Color.YELLOW);
         graphics.fillRect(x, y, 1, 1);
         g.drawImage(bufferedImage, 0, 0, width, height, null);
-        ArrayCanvas.paint(g2d, list, width, height);
+        ArrayCanvas.paintDataList(g2d, list, width, height);
     }
 
     @Override
     public void updateData(AlgoData data, Object... args) {
         this.list = (AlgoArray) data;
-        int c = ++count;
-        x = (Integer) args[0];
-        y = (Integer) args[1];
-        if (x * x + y * y < AlgoController.CANVAS_EDGE * AlgoController.CANVAS_EDGE)
-            inCycle++;
-        value.setText(" 算法" + id + "：π ≈ " + ((double) (inCycle << 2) / c));
-        sample.setText(" 样本总数：" + c);
+        if (args.length > 1) {
+            int c = ++count;
+            x = (Integer) args[0];
+            y = (Integer) args[1];
+            if (x * x + y * y < AlgoController.CANVAS_EDGE * AlgoController.CANVAS_EDGE)
+                inCycle++;
+            value.setText(" 算法" + id + "：π ≈ " + ((double) (inCycle << 2) / c));
+            sample.setText(" 样本总数：" + c);
+        }
         repaint();
     }
 

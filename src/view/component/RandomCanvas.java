@@ -29,23 +29,24 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
     private int count;
     private int inCycle;
 
-    public RandomCanvas(int id, int width, int height, AlgoArray array) {
+    public RandomCanvas(int id, int width, int height) {
         this.id = id;
         this.width = width;
         this.height = height;
-        this.list = array;
-        setLayout(new GridLayout(height / (TEXT_SIZE * 5 / 4), 1));
-        setBorder(new LineBorder(Color.BLACK));
+        setLayout(new GridLayout(height / (TEXT_SIZE * 5 / 4), 1));//布局
+        //标签
         value.setForeground(Color.WHITE);
         value.setFont(new Font("楷体", Font.PLAIN, TEXT_SIZE));
         add(value);
         sample.setForeground(Color.WHITE);
         sample.setFont(new Font("楷体", Font.PLAIN, TEXT_SIZE));
         add(sample);
+        //背景
         bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics graphics = bufferedImage.getGraphics();
         graphics.setColor(Color.CYAN);
         graphics.drawOval(1, 1, width << 1, height << 1);
+        setBorder(new LineBorder(Color.BLACK));//边框
     }
 
     @Override

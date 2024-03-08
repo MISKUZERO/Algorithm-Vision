@@ -1,6 +1,5 @@
 package view.component;
 
-import view.data.AlgoArray;
 import view.data.AlgoData;
 
 import javax.swing.*;
@@ -16,7 +15,7 @@ public class AlgoFrame extends JFrame {
         setLayout(new GridLayout(canvasRows, 0));
         canvas = new AlgoCanvas[canvasCount];
         for (int i = 0; i < canvasCount; i++) {
-            canvas[i] = new RandomCanvas(i, panelWidth, panelHeight, new AlgoArray());
+            canvas[i] = new RandomCanvas(i, panelWidth, panelHeight);
             add((Component) canvas[i]);
         }
         pack();

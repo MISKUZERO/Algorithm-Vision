@@ -4,6 +4,7 @@ import view.data.AlgoArray;
 import view.data.AlgoData;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 
 /**
@@ -15,13 +16,10 @@ public class ArrayCanvas extends JPanel implements AlgoCanvas {
     private final int height;
     private AlgoArray list;
 
-    public ArrayCanvas(int width, int height, AlgoArray data) {
-        super(true);
-        if (data == null)
-            throw new IllegalArgumentException("数据不能为空！");
+    public ArrayCanvas(int width, int height) {
         this.width = width;
         this.height = height;
-        this.list = data;
+        setBorder(new LineBorder(Color.BLACK));//边框
     }
 
     @Override

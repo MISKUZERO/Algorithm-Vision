@@ -33,10 +33,6 @@ public class ArrayCanvas extends JPanel implements AlgoCanvas {
         hints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.addRenderingHints(hints);
         // 具体绘制
-        paintDataList(g2d, list, width, height);
-    }
-
-    protected static void paintDataList(Graphics2D g2d, AlgoArray list, int width, int height) {
         int capacity = list.capacity();
         if (capacity == 0) return;
         int w = width / capacity;

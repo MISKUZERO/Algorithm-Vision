@@ -22,9 +22,9 @@ public class AlgoController {
     //画布中最大的正方形棱长
     public static final int CANVAS_EDGE = Math.min(SCENE_WIDTH / CANVAS_COUNT, SCENE_HEIGHT / CANVAS_ROWS);
     //参数
-    private static final int N = 500;//数组长度
-    private static final int TEST_COUNT = 10000;//重复次数
-    private static final int SCALE = 20;//增量
+    private static final int N = 50;//数组长度
+    private static final int TEST_COUNT = 1000;//重复次数
+    public static final int SCALE = 20;//增量
     private static int delay = 1;//延迟（播放速度）
 
     public static void launch() {
@@ -44,7 +44,6 @@ public class AlgoController {
             update(tid, data, r % CANVAS_EDGE, (r >>> 16) % CANVAS_EDGE);
         }
         firstPivotQuickSort(tid, false, (AlgoArray) data, 0, N - 1);
-        delay = 10;
         firstPivotQuickSort(tid, true, (AlgoArray) data, 0, N - 1);
     }
 
@@ -57,6 +56,7 @@ public class AlgoController {
             arr.set(index, arr.get(index) + SCALE);
             update(tid, data, r % CANVAS_EDGE, (r >>> 16) % CANVAS_EDGE);
         }
+        delay = 20;
         randomPivotQuickSort(tid, false, (AlgoArray) data, 0, N - 1);
         randomPivotQuickSort(tid, true, (AlgoArray) data, 0, N - 1);
     }
@@ -75,43 +75,73 @@ public class AlgoController {
 
     private static void randomPivotQuickSort(int tid, boolean asc, AlgoArray arr, int begin, int end) {
         if (begin < end) {
-            int pivot = arr.get((int) (Math.random() * (end - begin + 1)) + begin);
+            int pivotIndex = (int) (Math.random() * (end - begin + 1)) + begin;
+            int pivot = arr.get(pivotIndex);
+            int t = arr.get(begin);
+            arr.set(begin, pivot);
+            update(tid, arr, -1, -1, pivot);
+            arr.set(pivotIndex, t);
+            if (asc)
+                pivotIndex = divide(tid, arr, begin, end, pivot);
+            else
+                pivotIndex = reverseDivide(tid, arr, begin, end, pivot);
+            randomPivotQuickSort(tid, asc, arr, begin, pivotIndex - 1);
+            randomPivotQuickSort(tid, asc, arr, pivotIndex + 1, end);
+        }
+    }
+
+    private static void optimizedQuickSort(int tid, boolean asc, AlgoArray arr, int begin, int end) {
+        if (begin < end) {
+            int pivotIndex = (int) (Math.random() * (end - begin + 1)) + begin;
+            int pivot = arr.get(pivotIndex);
             if (asc)
                 pivot = divide(tid, arr, begin, end, pivot);
             else
                 pivot = reverseDivide(tid, arr, begin, end, pivot);
-            randomPivotQuickSort(tid, asc, arr, begin, pivot - 1);
-            randomPivotQuickSort(tid, asc, arr, pivot + 1, end);
+            optimizedQuickSort(tid, asc, arr, begin, pivot - 1);
+            optimizedQuickSort(tid, asc, arr, pivot + 1, end);
         }
     }
 
     private static int divide(int tid, AlgoArray arr, int begin, int end, int pivot) {
         int low = begin, high = end;
         while (low != high) {
-            while (low != high && arr.get(high) >= pivot) high--;
+            while (low != high && arr.get(high) >= pivot) {
+                update(tid, arr, -1, high, pivot);
+                high--;
+            }
             arr.set(low, arr.get(high));
-            update(tid, arr);
-            while (low != high && arr.get(low) <= pivot) low++;
+            update(tid, arr, -1, -1, pivot);
+            while (low != high && arr.get(low) <= pivot) {
+                low++;
+                update(tid, arr, low, -1, pivot);
+            }
             arr.set(high, arr.get(low));
-            update(tid, arr);
+            update(tid, arr, -1, -1, pivot);
         }
         arr.set(low, pivot);
-        update(tid, arr);
+        update(tid, arr, -1, -1, pivot);
         return low;
     }
 
     private static int reverseDivide(int tid, AlgoArray arr, int begin, int end, int pivot) {
         int low = begin, high = end;
         while (low != high) {
-            while (low != high && arr.get(high) <= pivot) high--;
+            while (low != high && arr.get(high) <= pivot) {
+                update(tid, arr, -1, high, pivot);
+                high--;
+            }
             arr.set(low, arr.get(high));
-            update(tid, arr);
-            while (low != high && arr.get(low) >= pivot) low++;
+            update(tid, arr, -1, -1, pivot);
+            while (low != high && arr.get(low) >= pivot) {
+                low++;
+                update(tid, arr, low, -1, pivot);
+            }
             arr.set(high, arr.get(low));
-            update(tid, arr);
+            update(tid, arr, -1, -1, pivot);
         }
         arr.set(low, pivot);
-        update(tid, arr);
+        update(tid, arr, -1, -1, pivot);
         return low;
     }
 

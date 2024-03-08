@@ -25,10 +25,16 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
     private final JLabel value = new JLabel();
     private final JLabel sample = new JLabel();
     private final BufferedImage bufferedImage;
+    //随机点坐标
     private int x;
     private int y;
+    //统计值
     private int count;
     private int inCycle;
+    //排序标记
+    private int low = -1;
+    private int high = -1;
+    private int pivot = -100;
 
     public RandomCanvas(int id, int width, int height) {
         this.id = id;
@@ -62,21 +68,42 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
         Graphics graphics = bufferedImage.getGraphics();
         graphics.setColor(Color.YELLOW);
         graphics.fillRect(x, y, 1, 1);
-        g.drawImage(bufferedImage, 0, 0, width, height, null);
-        ArrayCanvas.paintDataList(g2d, list, width, height);
+        int wd = width, h = height;
+        g2d.drawImage(bufferedImage, 0, 0, wd, h, null);
+        int capacity = list.capacity();
+        if (capacity == 0) return;
+        int w = wd / capacity;
+        for (int i = 0; i < capacity; i++) {
+            if (i == low)
+                g2d.setColor(Color.RED);
+            else if (i == high)
+                g2d.setColor(Color.CYAN);
+            else
+                g2d.setColor(Color.GRAY);
+            g2d.fillRect(i * w, h - list.get(i), w - 1, list.get(i));
+        }
+        int p = pivot;
+        int ph = h - p;
+        g2d.setColor(Color.WHITE);
+        g2d.drawString("Pivot", 5, ph - 5);
+        g2d.drawLine(0, ph, wd, ph);
     }
 
     @Override
     public void updateData(AlgoData data, Object... args) {
         this.list = (AlgoArray) data;
-        if (args.length > 1) {
+        if (args.length == 2) {
             int c = ++count;
-            x = (Integer) args[0];
-            y = (Integer) args[1];
+            x = (int) args[0];
+            y = (int) args[1];
             if (x * x + y * y < AlgoController.CANVAS_EDGE * AlgoController.CANVAS_EDGE)
                 inCycle++;
             value.setText(" 算法" + id + "：π ≈ " + ((double) (inCycle << 2) / c));
             sample.setText(" 样本总数：" + c);
+        } else {
+            low = (int) args[0];
+            high = (int) args[1];
+            pivot = (int) args[2];
         }
         repaint();
     }

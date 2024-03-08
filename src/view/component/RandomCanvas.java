@@ -1,5 +1,6 @@
 package view.component;
 
+import view.AlgoController;
 import view.data.AlgoArray;
 import view.data.AlgoData;
 
@@ -45,7 +46,7 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
         bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics graphics = bufferedImage.getGraphics();
         graphics.setColor(Color.CYAN);
-        graphics.drawOval(1, 1, width << 1, height << 1);
+        graphics.drawOval(0, 0, AlgoController.CANVAS_EDGE << 1, AlgoController.CANVAS_EDGE << 1);
         setBorder(new LineBorder(Color.BLACK));//边框
     }
 
@@ -69,10 +70,9 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
     public void updateData(AlgoData data, Object... args) {
         this.list = (AlgoArray) data;
         int c = ++count;
-        int r = height;
         x = (Integer) args[0];
         y = (Integer) args[1];
-        if (x * x + y * y < r * r)
+        if (x * x + y * y < AlgoController.CANVAS_EDGE * AlgoController.CANVAS_EDGE)
             inCycle++;
         value.setText(" 算法" + id + "：π ≈ " + ((double) (inCycle << 2) / c));
         sample.setText(" 样本总数：" + c);

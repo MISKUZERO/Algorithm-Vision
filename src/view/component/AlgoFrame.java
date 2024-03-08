@@ -9,13 +9,13 @@ public class AlgoFrame extends JFrame {
 
     private final AlgoCanvas[] canvas;
 
-    public AlgoFrame(String title, int panelWidth, int panelHeight, int canvasCount, int canvasRows) {
+    public AlgoFrame(String title, int canvasWidth, int canvasHeight, int canvasCount, int canvasRows) {
         super(title);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridLayout(canvasRows, 0));
         canvas = new AlgoCanvas[canvasCount];
         for (int i = 0; i < canvasCount; i++) {
-            canvas[i] = new RandomCanvas(i, panelWidth, panelHeight);
+            canvas[i] = new RandomCanvas(i, canvasWidth, canvasHeight);
             add((Component) canvas[i]);
         }
         pack();

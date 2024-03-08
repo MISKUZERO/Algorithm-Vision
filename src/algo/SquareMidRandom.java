@@ -1,9 +1,9 @@
-package random;
+package algo;
 
 /**
  * @author MiskuZero
  */
-public class SquareMid {
+public class SquareMidRandom {
 
     private static long seed = next();
 

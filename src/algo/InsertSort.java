@@ -1,5 +1,8 @@
 package algo;
 
+/**
+ * @author MiskuZero
+ */
 public class InsertSort {
 
     public static void doSort(int[] arr, int begin, int end) {

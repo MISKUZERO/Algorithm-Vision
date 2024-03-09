@@ -11,16 +11,16 @@ public class QuickSort {
         int len = 10000000;
         int[] arr = new int[len];
         for (int j = 0; j < len; j++) {
-            arr[j] = (int) (Math.random() * len / 1000);
+            arr[j] = (int) (Math.random() * len / 100);
         }
         int[] arr1 = Arrays.copyOf(arr, len);
 
         long l = System.currentTimeMillis();
-        QuickSort.gatherEqu(arr1, 0, len - 1);
+        QSort.threeInsertGather(arr1, 0, len - 1);
         long l1 = System.currentTimeMillis();
         System.out.println(l1 - l + "ms");
         l = System.currentTimeMillis();
-        QuickSort.firstPivot(arr, 0, len - 1);
+        QuickSort.gatherEqu(arr, 0, len - 1);
         l1 = System.currentTimeMillis();
         System.out.println(l1 - l + "ms");
 
@@ -38,7 +38,7 @@ public class QuickSort {
     }
 
     public static void gatherEqu(int[] arr, int begin, int end) {
-        if (end - begin < 47) {
+        if (end - begin < 40) {
             InsertSort.doSort(arr, begin, end);
             return;
         }

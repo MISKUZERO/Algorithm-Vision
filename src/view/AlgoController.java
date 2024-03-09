@@ -5,6 +5,8 @@ import view.component.AlgoFrame;
 import view.data.AlgoArray;
 import view.data.AlgoData;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.Random;
 
 /**
@@ -23,12 +25,33 @@ public class AlgoController {
     public static final int CANVAS_EDGE = Math.min(SCENE_WIDTH / CANVAS_COUNT, SCENE_HEIGHT / CANVAS_ROWS);
     //参数
     private static final int N = 50;//数组长度
-    private static final int TEST_COUNT = 1000;//重复次数
+    private static final int TEST_COUNT = 2000;//重复次数
     public static final int SCALE = 20;//增量
-    private static int delay = 1;//延迟（播放速度）
+    private static final int DELAY = 200;//延迟（播放速度）
+    private static int delay = DELAY;//控制延迟
+//    private static final CountDownLatch latch = new CountDownLatch(CANVAS_COUNT);
 
     public static void launch() {
         FRAME = new AlgoFrame(TITLE, CANVAS_EDGE, CANVAS_EDGE, CANVAS_COUNT, CANVAS_ROWS);
+        FRAME.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int keyCode = e.getKeyCode();
+                if (keyCode == KeyEvent.VK_RIGHT)
+                    delay = DELAY >> 2;
+                if (keyCode == KeyEvent.VK_SUBTRACT)
+                    delay = 1;
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                int keyCode = e.getKeyCode();
+                if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_SUBTRACT)
+                    delay = DELAY;
+            }
+
+        });
         new Thread(() -> run(new AlgoArray(N))).start();
         new Thread(() -> run1(new AlgoArray(N))).start();
     }
@@ -56,7 +79,6 @@ public class AlgoController {
             arr.set(index, arr.get(index) + SCALE);
             update(tid, data, r % CANVAS_EDGE, (r >>> 16) % CANVAS_EDGE);
         }
-        delay = 20;
         randomPivotQuickSort(tid, false, (AlgoArray) data, 0, N - 1);
         randomPivotQuickSort(tid, true, (AlgoArray) data, 0, N - 1);
     }
@@ -79,8 +101,9 @@ public class AlgoController {
             int pivot = arr.get(pivotIndex);
             int t = arr.get(begin);
             arr.set(begin, pivot);
-            update(tid, arr, -1, -1, pivot);
+            update(tid, arr, -1, -1, pivot, 3);
             arr.set(pivotIndex, t);
+            update(tid, arr, -1, -1, pivot, 3);
             if (asc)
                 pivotIndex = divide(tid, arr, begin, end, pivot);
             else
@@ -90,37 +113,24 @@ public class AlgoController {
         }
     }
 
-    private static void optimizedQuickSort(int tid, boolean asc, AlgoArray arr, int begin, int end) {
-        if (begin < end) {
-            int pivotIndex = (int) (Math.random() * (end - begin + 1)) + begin;
-            int pivot = arr.get(pivotIndex);
-            if (asc)
-                pivot = divide(tid, arr, begin, end, pivot);
-            else
-                pivot = reverseDivide(tid, arr, begin, end, pivot);
-            optimizedQuickSort(tid, asc, arr, begin, pivot - 1);
-            optimizedQuickSort(tid, asc, arr, pivot + 1, end);
-        }
-    }
-
     private static int divide(int tid, AlgoArray arr, int begin, int end, int pivot) {
         int low = begin, high = end;
         while (low != high) {
             while (low != high && arr.get(high) >= pivot) {
-                update(tid, arr, -1, high, pivot);
+                update(tid, arr, -1, high, pivot, 1);
                 high--;
             }
             arr.set(low, arr.get(high));
-            update(tid, arr, -1, -1, pivot);
+            update(tid, arr, -1, -1, pivot, 3);
             while (low != high && arr.get(low) <= pivot) {
+                update(tid, arr, low, -1, pivot, 1);
                 low++;
-                update(tid, arr, low, -1, pivot);
             }
             arr.set(high, arr.get(low));
-            update(tid, arr, -1, -1, pivot);
+            update(tid, arr, -1, -1, pivot, 3);
         }
         arr.set(low, pivot);
-        update(tid, arr, -1, -1, pivot);
+        update(tid, arr, -1, -1, pivot, 2);
         return low;
     }
 
@@ -128,20 +138,20 @@ public class AlgoController {
         int low = begin, high = end;
         while (low != high) {
             while (low != high && arr.get(high) <= pivot) {
-                update(tid, arr, -1, high, pivot);
+                update(tid, arr, -1, high, pivot, 1);
                 high--;
             }
             arr.set(low, arr.get(high));
-            update(tid, arr, -1, -1, pivot);
+            update(tid, arr, -1, -1, pivot, 3);
             while (low != high && arr.get(low) >= pivot) {
+                update(tid, arr, low, -1, pivot, 1);
                 low++;
-                update(tid, arr, low, -1, pivot);
             }
             arr.set(high, arr.get(low));
-            update(tid, arr, -1, -1, pivot);
+            update(tid, arr, -1, -1, pivot, 3);
         }
         arr.set(low, pivot);
-        update(tid, arr, -1, -1, pivot);
+        update(tid, arr, -1, -1, pivot, 2);
         return low;
     }
 

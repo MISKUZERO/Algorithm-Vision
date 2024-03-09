@@ -24,13 +24,17 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
     private AlgoArray list;
     private final JLabel value = new JLabel();
     private final JLabel sample = new JLabel();
+    private final JLabel read = new JLabel();
+    private final JLabel write = new JLabel();
     private final BufferedImage bufferedImage;
     //随机点坐标
     private int x;
     private int y;
     //统计值
     private int count;
-    private int inCycle;
+    private int interCount;
+    private int readCount;
+    private int writeCount;
     //排序标记
     private int low = -1;
     private int high = -1;
@@ -43,11 +47,17 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
         setLayout(new GridLayout(height / (TEXT_SIZE * 5 / 4), 1));//布局
         //标签
         value.setForeground(Color.WHITE);
-        value.setFont(new Font("楷体", Font.PLAIN, TEXT_SIZE));
-        add(value);
         sample.setForeground(Color.WHITE);
+        read.setForeground(Color.WHITE);
+        write.setForeground(Color.WHITE);
+        value.setFont(new Font("楷体", Font.PLAIN, TEXT_SIZE));
         sample.setFont(new Font("楷体", Font.PLAIN, TEXT_SIZE));
+        read.setFont(new Font("楷体", Font.PLAIN, TEXT_SIZE));
+        write.setFont(new Font("楷体", Font.PLAIN, TEXT_SIZE));
+        add(value);
         add(sample);
+        add(read);
+        add(write);
         //背景
         bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics graphics = bufferedImage.getGraphics();
@@ -97,13 +107,20 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
             x = (int) args[0];
             y = (int) args[1];
             if (x * x + y * y < AlgoController.CANVAS_EDGE * AlgoController.CANVAS_EDGE)
-                inCycle++;
-            value.setText(" 算法" + id + "：π ≈ " + ((double) (inCycle << 2) / c));
+                interCount++;
+            value.setText(" 算法" + id + "：π ≈ " + ((double) (interCount << 2) / c));
             sample.setText(" 样本总数：" + c);
         } else {
             low = (int) args[0];
             high = (int) args[1];
             pivot = (int) args[2];
+            int rw = (int) args[3];
+            if ((rw & 0b01) == 0b01)
+                readCount++;
+            if ((rw & 0b10) == 0b10)
+                writeCount++;
+            read.setText(" 读次数：" + readCount);
+            write.setText(" 写次数：" + writeCount);
         }
         repaint();
     }

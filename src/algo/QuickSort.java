@@ -8,19 +8,18 @@ import java.util.Arrays;
 public class QuickSort {
 
     public static void main(String[] args) {
-        int len = 20;
-        int[] arr = new int[len];
-        for (int i = 0; i < len; i++) {
-            arr[i] = (int) (Math.random() * len);
+        int len = 1234;
+        for (int i = 0; i < 5678; i++) {
+            int[] arr = new int[len];
+            for (int j = 0; j < len; j++) {
+                arr[j] = (int) (Math.random() * len);
+            }
+            int[] arr1 = Arrays.copyOf(arr, len);
+            QuickSort.gatherEqu(arr, 0, len - 1);
+            Arrays.sort(arr1);
+            System.out.print(Arrays.equals(arr, arr1) + " ");
         }
-        int[] arr1 = Arrays.copyOf(arr, len);
-        System.out.println(Arrays.toString(arr));
-        System.out.println(Arrays.toString(arr1));
-        System.out.println("-------------------------");
-        QuickSort.randomPivot(arr, 0, len - 1);
-        Arrays.sort(arr1);
-        System.out.println(Arrays.toString(arr));
-        System.out.println(Arrays.toString(arr1));
+
     }
 
     public static void firstPivot(int[] arr, int begin, int end) {
@@ -30,6 +29,50 @@ public class QuickSort {
             firstPivot(arr, begin, pivot - 1);
             firstPivot(arr, pivot + 1, end);
         }
+    }
+
+    public static void gatherEqu(int[] arr, int begin, int end) {
+        if (end - begin < 16) {
+            firstPivot(arr, begin, end);
+            return;
+        }
+        int pivotIndex = (int) (Math.random() * (end - begin)) + begin + 1;//长度为N的数组相对范围[1, N]
+        int pivot = arr[pivotIndex];
+        int i = begin, j = end, k = pivotIndex;
+        while (k != j) {
+            while (j != k && arr[j] > pivot) j--;
+            if (arr[j] == pivot) {
+                while (k != j && arr[k] == pivot) k++;
+                arr[j] = arr[k];
+                arr[k] = pivot;
+                continue;
+            }
+            while (i != pivotIndex && arr[i] < pivot) i++;
+            if (i == pivotIndex) {
+                if (++k == j) {
+                    arr[i] = arr[j];
+                    arr[j] = pivot;
+                    pivotIndex++;//保证：arr[pivotIndex, k]之间值都是pivot
+                    break;
+                }
+                arr[i] = arr[k];
+                arr[k] = pivot;
+                pivotIndex++;//保证：arr[pivotIndex, k]之间值都是pivot
+            }
+            int t = arr[i];
+            arr[i] = arr[j];
+            arr[j] = t;
+        }
+        //arr[j] = pivot，且arr[pivotIndex, k]之间值都是pivot
+        while (i < pivotIndex) {
+            while (arr[i] < pivot) i++;
+            if (arr[i] != pivot)
+                arr[j--] = arr[i];
+            arr[i] = arr[--pivotIndex];
+            arr[pivotIndex] = pivot;
+        }
+        gatherEqu(arr, begin, i);
+        gatherEqu(arr, j + 1, end);
     }
 
     public static void randomPivot(int[] arr, int begin, int end) {

@@ -8,17 +8,23 @@ import java.util.Arrays;
 public class QuickSort {
 
     public static void main(String[] args) {
-        int len = 1234;
-        for (int i = 0; i < 5678; i++) {
-            int[] arr = new int[len];
-            for (int j = 0; j < len; j++) {
-                arr[j] = (int) (Math.random() * len);
-            }
-            int[] arr1 = Arrays.copyOf(arr, len);
-            QuickSort.gatherEqu(arr, 0, len - 1);
-            Arrays.sort(arr1);
-            System.out.print(Arrays.equals(arr, arr1) + " ");
+        int len = 10000000;
+        int[] arr = new int[len];
+        for (int j = 0; j < len; j++) {
+            arr[j] = (int) (Math.random() * len / 1000);
         }
+        int[] arr1 = Arrays.copyOf(arr, len);
+
+        long l = System.currentTimeMillis();
+        QuickSort.gatherEqu(arr1, 0, len - 1);
+        long l1 = System.currentTimeMillis();
+        System.out.println(l1 - l + "ms");
+        l = System.currentTimeMillis();
+        QuickSort.firstPivot(arr, 0, len - 1);
+        l1 = System.currentTimeMillis();
+        System.out.println(l1 - l + "ms");
+
+        System.out.println(Arrays.equals(arr, arr1));
 
     }
 
@@ -32,22 +38,22 @@ public class QuickSort {
     }
 
     public static void gatherEqu(int[] arr, int begin, int end) {
-        if (end - begin < 16) {
-            firstPivot(arr, begin, end);
+        if (end - begin < 47) {
+            InsertSort.doSort(arr, begin, end);
             return;
         }
         int pivotIndex = (int) (Math.random() * (end - begin)) + begin + 1;//长度为N的数组相对范围[1, N]
         int pivot = arr[pivotIndex];
         int i = begin, j = end, k = pivotIndex;
         while (k != j) {
-            while (j != k && arr[j] > pivot) j--;
+            while (arr[j] > pivot) j--;
             if (arr[j] == pivot) {
                 while (k != j && arr[k] == pivot) k++;
                 arr[j] = arr[k];
                 arr[k] = pivot;
                 continue;
             }
-            while (i != pivotIndex && arr[i] < pivot) i++;
+            while (arr[i] < pivot) i++;
             if (i == pivotIndex) {
                 if (++k == j) {
                     arr[i] = arr[j];

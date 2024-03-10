@@ -19,13 +19,11 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
     private final int width;
     private final int height;
 
-    private static final int TEXT_SIZE = 32;//文本尺寸
-
     private AlgoArray list;
-    private final JLabel value = new JLabel();
-    private final JLabel sample = new JLabel();
-    private final JLabel read = new JLabel();
-    private final JLabel write = new JLabel();
+    private final JLabel value;
+    private final JLabel sample;
+    private final JLabel read;
+    private final JLabel write;
     private final BufferedImage bufferedImage;
     //随机点坐标
     private int x;
@@ -36,24 +34,31 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
     private int readCount;
     private int writeCount;
     //排序标记
-    private int low = -1;
-    private int high = -1;
-    private int pivot = -100;
+    private int low;
+    private int high;
+    private int pivot;
 
     public RandomCanvas(int id, int width, int height) {
         this.id = id;
         this.width = width;
         this.height = height;
-        setLayout(new GridLayout(height / (TEXT_SIZE * 5 / 4), 1));//布局
+        this.low = -1;
+        this.high = -1;
+        this.pivot = -100;
+        setLayout(new GridLayout(height / (AlgoFrame.TEXT_SIZE * 5 / 4), 1));//布局
         //标签
+        value = new JLabel();
+        sample = new JLabel();
+        read = new JLabel();
+        write = new JLabel();
         value.setForeground(Color.WHITE);
         sample.setForeground(Color.WHITE);
         read.setForeground(Color.WHITE);
         write.setForeground(Color.WHITE);
-        value.setFont(new Font("楷体", Font.PLAIN, TEXT_SIZE));
-        sample.setFont(new Font("楷体", Font.PLAIN, TEXT_SIZE));
-        read.setFont(new Font("楷体", Font.PLAIN, TEXT_SIZE));
-        write.setFont(new Font("楷体", Font.PLAIN, TEXT_SIZE));
+        value.setFont(new Font("楷体", Font.PLAIN, AlgoFrame.TEXT_SIZE));
+        sample.setFont(new Font("楷体", Font.PLAIN, AlgoFrame.TEXT_SIZE));
+        read.setFont(new Font("楷体", Font.PLAIN, AlgoFrame.TEXT_SIZE));
+        write.setFont(new Font("楷体", Font.PLAIN, AlgoFrame.TEXT_SIZE));
         add(value);
         add(sample);
         add(read);

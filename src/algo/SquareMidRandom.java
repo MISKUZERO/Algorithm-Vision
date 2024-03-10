@@ -5,7 +5,11 @@ package algo;
  */
 public class SquareMidRandom {
 
-    private static long seed = next();
+    private static long seed;
+
+    static {
+        seed = next();
+    }
 
     private static int next() {
         return (int) ((System.nanoTime() & 0x3fffc) + (System.nanoTime() & 0xfffc));

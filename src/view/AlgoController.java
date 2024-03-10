@@ -8,13 +8,14 @@ import view.data.AlgoData;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Random;
+import java.util.concurrent.locks.LockSupport;
 
 /**
  * @author MiskuZero
  */
 public class AlgoController {
 
-    private static AlgoFrame FRAME;
+    private static AlgoFrame frame;
     //设置
     private static final String TITLE = "**仰望星空**";
     private static final int SCENE_WIDTH = 2000;
@@ -26,34 +27,76 @@ public class AlgoController {
     //参数
     private static final int N = 100;//数组长度
     private static final int TEST_COUNT = 5000;//重复次数
-    public static final int SCALE = 10;//增量
-    private static final int DELAY = 200;//延迟（播放速度）
-    private static int delay = DELAY;//控制延迟
-//    private static final CountDownLatch latch = new CountDownLatch(CANVAS_COUNT);
+    private static final int SCALE = 10;//增量
+    private static final int DELAY = 160;//延迟（正常播放速度）
+    private static final int FAST_WARD = 10;//快进延迟（快进播放速度）
+    //private static final CountDownLatch latch = new CountDownLatch(CANVAS_COUNT);
+    private static int delay = DELAY;
+    private static boolean pause;
+    private static Thread[] threads;
+    private static int mask;
 
     public static void launch() {
-        FRAME = new AlgoFrame(TITLE, CANVAS_EDGE, CANVAS_EDGE, CANVAS_COUNT, CANVAS_ROWS);
-        FRAME.addKeyListener(new KeyAdapter() {
+        frame = new AlgoFrame(TITLE, CANVAS_EDGE, CANVAS_EDGE, CANVAS_COUNT, CANVAS_ROWS);
+        frame.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                int keyCode = e.getKeyCode();
-                if (keyCode == KeyEvent.VK_RIGHT)
-                    delay = DELAY >> 2;
-                if (keyCode == KeyEvent.VK_SUBTRACT)
-                    delay = 1;
-
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {//右箭头16倍速快进，暂停模式下长按加快步骤
+                    if (pause) {
+                        mask++;
+                        if (mask > 1) {//暂停下触发长按，短按则是一步调试
+                            delay = FAST_WARD;
+                            for (Thread thread : threads)
+                                LockSupport.unpark(thread);
+                        }
+                    } else {
+                        delay = FAST_WARD;
+                        frame.renderText(" 16×");
+                    }
+                }
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
                 int keyCode = e.getKeyCode();
-                if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_SUBTRACT)
-                    delay = DELAY;
+                if (keyCode == KeyEvent.VK_SPACE) {//空格暂停
+                    delay = DELAY;//重置播放速度
+                    pause = !pause;
+                    if (pause) {
+                        frame.renderText(" pause");
+                    } else {
+                        frame.renderText("");
+                        for (Thread thread : threads)
+                            LockSupport.unpark(thread);
+                    }
+                }
+                if (pause) {
+                    if (keyCode == KeyEvent.VK_RIGHT) {//右箭头暂停状态下调试功能
+                        mask = 0;
+                        for (Thread thread : threads)
+                            LockSupport.unpark(thread);
+                    }
+                } else {
+                    if (keyCode == KeyEvent.VK_RIGHT) {
+                        delay = DELAY;
+                        frame.renderText("");
+                    }
+                    if (keyCode == KeyEvent.VK_SUBTRACT)//小键盘上的右上角”减号“满速运行（160倍速）
+                        if (delay == 1) {
+                            delay = DELAY;
+                            frame.renderText("");
+                        } else {
+                            delay = 1;
+                            frame.renderText(" 160×");
+                        }
+                }
             }
-
         });
-        new Thread(() -> run(new AlgoArray(N))).start();
-        new Thread(() -> run1(new AlgoArray(N))).start();
+        threads = new Thread[CANVAS_COUNT];
+        threads[0] = new Thread(() -> run(new AlgoArray(N)));
+        threads[1] = new Thread(() -> run1(new AlgoArray(N)));
+        for (Thread thread : threads)
+            thread.start();
     }
 
     private static void run(AlgoData data) {
@@ -162,7 +205,9 @@ public class AlgoController {
     }
 
     private static void update(int tid, AlgoData data, Object... args) {
-        FRAME.render(tid, data, args);
+        if (pause)
+            LockSupport.park();
+        frame.renderCanvas(tid, data, args);
         try {
             Thread.sleep(delay);
         } catch (InterruptedException e) {

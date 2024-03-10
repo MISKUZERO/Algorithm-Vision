@@ -135,6 +135,14 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
         repaint();
     }
 
+    public void resetRW() {
+        readCount = 0;
+        writeCount = 0;
+        read.setText(" 读次数：" + readCount);
+        write.setText(" 写次数：" + writeCount);
+        repaint();
+    }
+
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(width, height);

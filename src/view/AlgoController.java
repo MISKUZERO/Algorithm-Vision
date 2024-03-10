@@ -20,7 +20,7 @@ public class AlgoController {
     //设置
     private static final String TITLE = "**仰望星空**";
     private static final String[] CANVAS_NAMES = {
-            " 线性同余（API） + 固定轴",
+            " 线性同余（JDK） + 固定轴",
             " 平方取中 + 随机轴",
             " 平方取中 + 随机轴&聚集相等元素"};
     public static final int TEXT_SIZE = 32;//文本尺寸
@@ -32,7 +32,7 @@ public class AlgoController {
     public static final int CANVAS_EDGE = Math.min(SCENE_WIDTH / CANVAS_COUNT, SCENE_HEIGHT / CANVAS_ROWS);
     //参数
     private static final int N = 333;//数组长度
-    private static final int TEST_COUNT = 5000;//重复次数
+    private static final int TEST_COUNT = 6666;//重复次数
     private static final int SCALE = 10;//增量
     private static final int DELAY = 160;//延迟（正常播放速度）
     private static final int FAST_WARD = 10;//快进延迟（快进播放速度）
@@ -143,7 +143,9 @@ public class AlgoController {
         update(tid, arr, -1, -1, -1, -100, 0);
         latch1.countDown();
         latch1.await();//等待就绪
-        Thread.sleep(3000);
+        Thread.sleep(1500);
+        frame.resetCanvasRW(tid);
+        Thread.sleep(1500);
         quickSort(tid, true, (AlgoArray) data, 0, N - 1);
         update(tid, arr, -1, -1, -1, -100, 0);
     }
@@ -164,7 +166,9 @@ public class AlgoController {
         update(tid, arr, -1, -1, -1, -100, 0);
         latch1.countDown();
         latch1.await();//等待就绪
-        Thread.sleep(3000);
+        Thread.sleep(1500);
+        frame.resetCanvasRW(tid);
+        Thread.sleep(1500);
         ranPivQSort(tid, true, (AlgoArray) data, 0, N - 1);
         update(tid, arr, -1, -1, -1, -100, 0);
     }
@@ -185,7 +189,9 @@ public class AlgoController {
         update(tid, arr, -1, -1, -1, -100, 0);
         latch1.countDown();
         latch1.await();//等待就绪
-        Thread.sleep(3000);
+        Thread.sleep(1500);
+        frame.resetCanvasRW(tid);
+        Thread.sleep(1500);
         gaEquQSort(tid, (AlgoArray) data, 0, N - 1);
         update(tid, arr, -1, -1, -1, -100, 0);
     }

@@ -35,6 +35,10 @@ public class AlgoFrame extends JFrame {
         canvas[tid].updateData(data, args);
     }
 
+    public void resetCanvasRW(int tid) {
+        ((RandomCanvas) canvas[tid]).resetRW();
+    }
+
     public void renderText(String text) {
         speed.setText(text);
     }

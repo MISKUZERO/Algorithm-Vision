@@ -14,17 +14,14 @@ import java.awt.image.BufferedImage;
  */
 public class RandomCanvas extends JPanel implements AlgoCanvas {
 
-    private final int id;
-
     private final int width;
     private final int height;
-
-    private AlgoArray list;
     private final JLabel value;
     private final JLabel sample;
     private final JLabel read;
     private final JLabel write;
     private final BufferedImage bufferedImage;
+    private AlgoArray list;
     //随机点坐标
     private int x;
     private int y;
@@ -39,28 +36,31 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
     private int high;
     private int pivot;
 
-    public RandomCanvas(int id, int width, int height) {
-        this.id = id;
+    public RandomCanvas(String name, int width, int height) {
         this.width = width;
         this.height = height;
         this.low = -1;
         this.mid = -1;
         this.high = -1;
         this.pivot = -100;
-        setLayout(new GridLayout(height / (AlgoFrame.TEXT_SIZE * 5 / 4), 1));//布局
+        setLayout(new GridLayout(height / (AlgoController.TEXT_SIZE * 5 / 4), 1));//布局
         //标签
+        JLabel title = new JLabel(name);
         value = new JLabel();
         sample = new JLabel();
         read = new JLabel();
         write = new JLabel();
+        title.setForeground(Color.CYAN);
         value.setForeground(Color.WHITE);
         sample.setForeground(Color.WHITE);
         read.setForeground(Color.WHITE);
         write.setForeground(Color.WHITE);
-        value.setFont(new Font("楷体", Font.PLAIN, AlgoFrame.TEXT_SIZE));
-        sample.setFont(new Font("楷体", Font.PLAIN, AlgoFrame.TEXT_SIZE));
-        read.setFont(new Font("楷体", Font.PLAIN, AlgoFrame.TEXT_SIZE));
-        write.setFont(new Font("楷体", Font.PLAIN, AlgoFrame.TEXT_SIZE));
+        title.setFont(new Font("楷体", Font.BOLD, AlgoController.TEXT_SIZE));
+        value.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
+        sample.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
+        read.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
+        write.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
+        add(title);
         add(value);
         add(sample);
         add(read);
@@ -68,7 +68,7 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
         //背景
         bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics graphics = bufferedImage.getGraphics();
-        graphics.setColor(Color.CYAN);
+        graphics.setColor(Color.GREEN);
         graphics.drawOval(0, 0, AlgoController.CANVAS_EDGE << 1, AlgoController.CANVAS_EDGE << 1);
         setBorder(new LineBorder(Color.BLACK));//边框
     }
@@ -117,7 +117,7 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
             y = (int) args[1];
             if (x * x + y * y < AlgoController.CANVAS_EDGE * AlgoController.CANVAS_EDGE)
                 interCount++;
-            value.setText(" 算法" + id + "：π ≈ " + ((double) (interCount << 2) / c));
+            value.setText(" π ≈ " + ((double) (interCount << 2) / c));
             sample.setText(" 样本总数：" + c);
         } else {
             low = (int) args[0];

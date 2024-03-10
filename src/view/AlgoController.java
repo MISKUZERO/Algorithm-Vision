@@ -19,6 +19,11 @@ public class AlgoController {
     private static AlgoFrame frame;
     //设置
     private static final String TITLE = "**仰望星空**";
+    private static final String[] CANVAS_NAMES = {
+            " 线性同余（API） + 固定轴",
+            " 平方取中 + 随机轴",
+            " 平方取中 + 随机轴&聚集相等元素"};
+    public static final int TEXT_SIZE = 32;//文本尺寸
     private static final int SCENE_WIDTH = 2000;
     private static final int SCENE_HEIGHT = 1000;
     private static final int CANVAS_COUNT = 3;
@@ -40,7 +45,7 @@ public class AlgoController {
     private static int mask;
 
     public static void launch() {
-        frame = new AlgoFrame(TITLE, CANVAS_EDGE, CANVAS_EDGE, CANVAS_COUNT, CANVAS_ROWS);
+        frame = new AlgoFrame(TITLE, CANVAS_EDGE, CANVAS_EDGE, CANVAS_COUNT, CANVAS_ROWS, CANVAS_NAMES);
         frame.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -176,7 +181,7 @@ public class AlgoController {
         latch.countDown();
         latch.await();//等待就绪
         Thread.sleep(3000);
-        gaEquQSort(tid, (AlgoArray) data, 0, N - 1);
+        antiGaEquQSort(tid, (AlgoArray) data, 0, N - 1);
         update(tid, arr, -1, -1, -1, -100, 0);
         latch1.countDown();
         latch1.await();//等待就绪
@@ -338,6 +343,84 @@ public class AlgoController {
         gaEquQSort(tid, arr, j + 1, end);
     }
 
+    public static void antiGaEquQSort(int tid, AlgoArray arr, int begin, int end) {
+        if (end - begin < 20) {
+            antiISortInQSort(tid, arr, begin, end);
+            return;
+        }
+        int pivotIndex = (int) (Math.random() * (end - begin)) + begin + 1;//长度为N的数组相对范围[1, N]
+        int pivot = arr.get(pivotIndex);
+        int i = begin, j = end, k = pivotIndex;
+        update(tid, arr, i, k, j, pivot, 1);
+        while (k != j) {
+            update(tid, arr, i, k, j, pivot, 1);
+            while (arr.get(j) < pivot) {
+                j--;
+                update(tid, arr, i, k, j, pivot, 1);
+            }
+            update(tid, arr, i, k, j, pivot, 1);
+            if (arr.get(j) == pivot) {
+                update(tid, arr, i, k, j, pivot, 1);
+                while (k != j && arr.get(k) == pivot) {
+                    k++;
+                    update(tid, arr, i, k, j, pivot, 1);
+                }
+                arr.set(j, arr.get(k));
+                update(tid, arr, i, k, j, pivot, 3);
+                arr.set(k, pivot);
+                update(tid, arr, i, k, j, pivot, 2);
+                continue;
+            }
+            update(tid, arr, i, k, j, pivot, 1);
+            while (arr.get(i) > pivot) {
+                i++;
+                update(tid, arr, i, k, j, pivot, 1);
+            }
+            if (i == pivotIndex) {
+                if (++k == j) {
+                    arr.set(i, arr.get(j));
+                    update(tid, arr, i, k, j, pivot, 3);
+                    arr.set(j, pivot);
+                    update(tid, arr, i, k, j, pivot, 2);
+                    pivotIndex++;//保证：arr[pivotIndex, k]之间值都是pivot
+                    break;
+                }
+                arr.set(i, arr.get(k));
+                update(tid, arr, i, k, j, pivot, 3);
+                arr.set(k, pivot);
+                update(tid, arr, i, k, j, pivot, 2);
+                pivotIndex++;//保证：arr[pivotIndex, k]之间值都是pivot
+            }
+            int t = arr.get(i);
+            update(tid, arr, i, k, j, pivot, 1);
+            arr.set(i, arr.get(j));
+            update(tid, arr, i, k, j, pivot, 3);
+            arr.set(j, t);
+            update(tid, arr, i, k, j, pivot, 2);
+
+        }
+        //arr[j] = pivot，且arr[pivotIndex, k]之间值都是pivot
+        while (i < pivotIndex) {
+            update(tid, arr, i, k, j, pivot, 1);
+            while (arr.get(i) > pivot) {
+                i++;
+                update(tid, arr, i, k, j, pivot, 1);
+            }
+            update(tid, arr, i, k, j, pivot, 1);
+            if (arr.get(i) != pivot) {
+                arr.set(j--, arr.get(i));
+                update(tid, arr, i, k, j, pivot, 2);
+            }
+            arr.set(i, arr.get(--pivotIndex));
+            update(tid, arr, i, k, j, pivot, 3);
+            arr.set(pivotIndex, pivot);
+            update(tid, arr, i, k, j, pivot, 2);
+        }
+        antiGaEquQSort(tid, arr, begin, i);
+        antiGaEquQSort(tid, arr, j + 1, end);
+    }
+
+
     public static void iSortInQSort(int tid, AlgoArray arr, int begin, int end) {
         int len = end + 1;
         for (int i = begin + 1; i < len; i++) {
@@ -349,6 +432,27 @@ public class AlgoController {
                 int t = arr.get(j);
                 update(tid, arr, i, -1, j, -100, 1);
                 while (j > 0 && arr.get(j - 1) > t) {
+                    arr.set(j, arr.get(--j));
+                    update(tid, arr, i, -1, j, -100, 3);
+                    update(tid, arr, i, -1, j, -100, 1);
+                }
+                arr.set(j, t);
+                update(tid, arr, i, -1, j, -100, 2);
+            }
+        }
+    }
+
+    public static void antiISortInQSort(int tid, AlgoArray arr, int begin, int end) {
+        int len = end + 1;
+        for (int i = begin + 1; i < len; i++) {
+            update(tid, arr, i, -1, -1, -100, 1);
+            update(tid, arr, i, -1, -1, -100, 1);
+            if (arr.get(i) > arr.get(i - 1)) {
+                int j = i;
+                update(tid, arr, i, -1, j, -100, 1);
+                int t = arr.get(j);
+                update(tid, arr, i, -1, j, -100, 1);
+                while (j > 0 && arr.get(j - 1) < t) {
                     arr.set(j, arr.get(--j));
                     update(tid, arr, i, -1, j, -100, 3);
                     update(tid, arr, i, -1, j, -100, 1);

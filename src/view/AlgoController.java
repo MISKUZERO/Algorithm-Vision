@@ -21,12 +21,12 @@ public class AlgoController {
     private static final String TITLE = "**仰望星空**";
     private static final int SCENE_WIDTH = 2000;
     private static final int SCENE_HEIGHT = 1000;
-    private static final int CANVAS_COUNT = 2;
+    private static final int CANVAS_COUNT = 3;
     private static final int CANVAS_ROWS = 1;
     //画布中最大的正方形棱长
     public static final int CANVAS_EDGE = Math.min(SCENE_WIDTH / CANVAS_COUNT, SCENE_HEIGHT / CANVAS_ROWS);
     //参数
-    private static final int N = 100;//数组长度
+    private static final int N = 333;//数组长度
     private static final int TEST_COUNT = 5000;//重复次数
     private static final int SCALE = 10;//增量
     private static final int DELAY = 160;//延迟（正常播放速度）
@@ -110,6 +110,13 @@ public class AlgoController {
                 e.printStackTrace();
             }
         });
+        threads[2] = new Thread(() -> {
+            try {
+                run2(new AlgoArray(N));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
         for (Thread thread : threads)
             thread.start();
     }
@@ -127,12 +134,12 @@ public class AlgoController {
         latch.countDown();
         latch.await();//等待就绪
         Thread.sleep(3000);
-        firstPivotQuickSort(tid, false, (AlgoArray) data, 0, N - 1);
+        quickSort(tid, false, (AlgoArray) data, 0, N - 1);
         update(tid, arr, -1, -1, -1, -100, 0);
         latch1.countDown();
         latch1.await();//等待就绪
         Thread.sleep(3000);
-        firstPivotQuickSort(tid, true, (AlgoArray) data, 0, N - 1);
+        quickSort(tid, true, (AlgoArray) data, 0, N - 1);
         update(tid, arr, -1, -1, -1, -100, 0);
     }
 
@@ -148,28 +155,49 @@ public class AlgoController {
         latch.countDown();
         latch.await();//等待就绪
         Thread.sleep(3000);
-        randomPivotQuickSort(tid, false, (AlgoArray) data, 0, N - 1);
+        ranPivQSort(tid, false, (AlgoArray) data, 0, N - 1);
         update(tid, arr, -1, -1, -1, -100, 0);
         latch1.countDown();
         latch1.await();//等待就绪
         Thread.sleep(3000);
-        randomPivotQuickSort(tid, true, (AlgoArray) data, 0, N - 1);
+        ranPivQSort(tid, true, (AlgoArray) data, 0, N - 1);
         update(tid, arr, -1, -1, -1, -100, 0);
     }
 
-    private static void firstPivotQuickSort(int tid, boolean asc, AlgoArray arr, int begin, int end) {
+    private static void run2(AlgoData data) throws InterruptedException {
+        int tid = 2;
+        AlgoArray arr = (AlgoArray) data;
+        for (int i = 0; i < TEST_COUNT; i++) {
+            int r = SquareMidRandom.nextInt(Integer.MAX_VALUE);
+            int index = r % N;
+            arr.set(index, arr.get(index) + SCALE);
+            update(tid, data, r % CANVAS_EDGE, (r >>> 16) % CANVAS_EDGE);
+        }
+        latch.countDown();
+        latch.await();//等待就绪
+        Thread.sleep(3000);
+        gaEquQSort(tid, (AlgoArray) data, 0, N - 1);
+        update(tid, arr, -1, -1, -1, -100, 0);
+        latch1.countDown();
+        latch1.await();//等待就绪
+        Thread.sleep(3000);
+        gaEquQSort(tid, (AlgoArray) data, 0, N - 1);
+        update(tid, arr, -1, -1, -1, -100, 0);
+    }
+
+    private static void quickSort(int tid, boolean asc, AlgoArray arr, int begin, int end) {
         if (begin < end) {
             int pivot = arr.get(begin);
             if (asc)
                 pivot = divide(tid, arr, begin, end, pivot);
             else
-                pivot = reverseDivide(tid, arr, begin, end, pivot);
-            firstPivotQuickSort(tid, asc, arr, begin, pivot - 1);
-            firstPivotQuickSort(tid, asc, arr, pivot + 1, end);
+                pivot = antiDivide(tid, arr, begin, end, pivot);
+            quickSort(tid, asc, arr, begin, pivot - 1);
+            quickSort(tid, asc, arr, pivot + 1, end);
         }
     }
 
-    private static void randomPivotQuickSort(int tid, boolean asc, AlgoArray arr, int begin, int end) {
+    private static void ranPivQSort(int tid, boolean asc, AlgoArray arr, int begin, int end) {
         if (begin < end) {
             int pivotIndex = (int) (Math.random() * (end - begin + 1)) + begin;
             int pivot = arr.get(pivotIndex);
@@ -181,9 +209,9 @@ public class AlgoController {
             if (asc)
                 pivotIndex = divide(tid, arr, begin, end, pivot);
             else
-                pivotIndex = reverseDivide(tid, arr, begin, end, pivot);
-            randomPivotQuickSort(tid, asc, arr, begin, pivotIndex - 1);
-            randomPivotQuickSort(tid, asc, arr, pivotIndex + 1, end);
+                pivotIndex = antiDivide(tid, arr, begin, end, pivot);
+            ranPivQSort(tid, asc, arr, begin, pivotIndex - 1);
+            ranPivQSort(tid, asc, arr, pivotIndex + 1, end);
         }
     }
 
@@ -210,7 +238,7 @@ public class AlgoController {
         return low;
     }
 
-    private static int reverseDivide(int tid, AlgoArray arr, int begin, int end, int pivot) {
+    private static int antiDivide(int tid, AlgoArray arr, int begin, int end, int pivot) {
         int low = begin, high = end;
         while (low != high) {
             update(tid, arr, -1, -1, high, pivot, 1);
@@ -233,59 +261,102 @@ public class AlgoController {
         return low;
     }
 
-    public static void gatherEqu(int[] arr, int begin, int end) {
-        if (end - begin < 40) {
-            insertSort(arr, begin, end);
+    public static void gaEquQSort(int tid, AlgoArray arr, int begin, int end) {
+        if (end - begin < 20) {
+            iSortInQSort(tid, arr, begin, end);
             return;
         }
         int pivotIndex = (int) (Math.random() * (end - begin)) + begin + 1;//长度为N的数组相对范围[1, N]
-        int pivot = arr[pivotIndex];
+        int pivot = arr.get(pivotIndex);
         int i = begin, j = end, k = pivotIndex;
+        update(tid, arr, i, k, j, pivot, 1);
         while (k != j) {
-            while (arr[j] > pivot) j--;
-            if (arr[j] == pivot) {
-                while (k != j && arr[k] == pivot) k++;
-                arr[j] = arr[k];
-                arr[k] = pivot;
+            update(tid, arr, i, k, j, pivot, 1);
+            while (arr.get(j) > pivot) {
+                j--;
+                update(tid, arr, i, k, j, pivot, 1);
+            }
+            update(tid, arr, i, k, j, pivot, 1);
+            if (arr.get(j) == pivot) {
+                update(tid, arr, i, k, j, pivot, 1);
+                while (k != j && arr.get(k) == pivot) {
+                    k++;
+                    update(tid, arr, i, k, j, pivot, 1);
+                }
+                arr.set(j, arr.get(k));
+                update(tid, arr, i, k, j, pivot, 3);
+                arr.set(k, pivot);
+                update(tid, arr, i, k, j, pivot, 2);
                 continue;
             }
-            while (arr[i] < pivot) i++;
+            update(tid, arr, i, k, j, pivot, 1);
+            while (arr.get(i) < pivot) {
+                i++;
+                update(tid, arr, i, k, j, pivot, 1);
+            }
             if (i == pivotIndex) {
                 if (++k == j) {
-                    arr[i] = arr[j];
-                    arr[j] = pivot;
+                    arr.set(i, arr.get(j));
+                    update(tid, arr, i, k, j, pivot, 3);
+                    arr.set(j, pivot);
+                    update(tid, arr, i, k, j, pivot, 2);
                     pivotIndex++;//保证：arr[pivotIndex, k]之间值都是pivot
                     break;
                 }
-                arr[i] = arr[k];
-                arr[k] = pivot;
+                arr.set(i, arr.get(k));
+                update(tid, arr, i, k, j, pivot, 3);
+                arr.set(k, pivot);
+                update(tid, arr, i, k, j, pivot, 2);
                 pivotIndex++;//保证：arr[pivotIndex, k]之间值都是pivot
             }
-            int t = arr[i];
-            arr[i] = arr[j];
-            arr[j] = t;
+            int t = arr.get(i);
+            update(tid, arr, i, k, j, pivot, 1);
+            arr.set(i, arr.get(j));
+            update(tid, arr, i, k, j, pivot, 3);
+            arr.set(j, t);
+            update(tid, arr, i, k, j, pivot, 2);
+
         }
         //arr[j] = pivot，且arr[pivotIndex, k]之间值都是pivot
         while (i < pivotIndex) {
-            while (arr[i] < pivot) i++;
-            if (arr[i] != pivot)
-                arr[j--] = arr[i];
-            arr[i] = arr[--pivotIndex];
-            arr[pivotIndex] = pivot;
+            update(tid, arr, i, k, j, pivot, 1);
+            while (arr.get(i) < pivot) {
+                i++;
+                update(tid, arr, i, k, j, pivot, 1);
+            }
+            update(tid, arr, i, k, j, pivot, 1);
+            if (arr.get(i) != pivot) {
+                arr.set(j--, arr.get(i));
+                update(tid, arr, i, k, j, pivot, 2);
+            }
+            arr.set(i, arr.get(--pivotIndex));
+            update(tid, arr, i, k, j, pivot, 3);
+            arr.set(pivotIndex, pivot);
+            update(tid, arr, i, k, j, pivot, 2);
         }
-        gatherEqu(arr, begin, i);
-        gatherEqu(arr, j + 1, end);
+        gaEquQSort(tid, arr, begin, i);
+        gaEquQSort(tid, arr, j + 1, end);
     }
 
-    public static void insertSort(int[] arr, int begin, int end) {
+    public static void iSortInQSort(int tid, AlgoArray arr, int begin, int end) {
         int len = end + 1;
-        for (int i = begin + 1; i < len; i++)
-            if (arr[i] < arr[i - 1]) {
+        for (int i = begin + 1; i < len; i++) {
+            update(tid, arr, i, -1, -1, -100, 1);
+            update(tid, arr, i, -1, -1, -100, 1);
+            if (arr.get(i) < arr.get(i - 1)) {
                 int j = i;
-                int t = arr[j];
-                while (j > 0 && arr[j - 1] > t) arr[j] = arr[--j];
-                arr[j] = t;
+                update(tid, arr, i, -1, j, -100, 1);
+                int t = arr.get(j);
+                update(tid, arr, i, -1, j, -100, 1);
+                while (j > 0 && arr.get(j - 1) > t) {
+                    arr.set(j, arr.get(--j));
+                    update(tid, arr, i, -1, j, -100, 3);
+                    update(tid, arr, i, -1, j, -100, 1);
+                }
+                arr.set(j, t);
+                update(tid, arr, i, -1, j, -100, 2);
             }
+        }
     }
 
 

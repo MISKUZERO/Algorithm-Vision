@@ -35,6 +35,7 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
     private int writeCount;
     //排序标记
     private int low;
+    private int mid;
     private int high;
     private int pivot;
 
@@ -43,6 +44,7 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
         this.width = width;
         this.height = height;
         this.low = -1;
+        this.mid = -1;
         this.high = -1;
         this.pivot = -100;
         setLayout(new GridLayout(height / (AlgoFrame.TEXT_SIZE * 5 / 4), 1));//布局
@@ -93,6 +95,8 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
                 g2d.setColor(Color.RED);
             else if (i == high)
                 g2d.setColor(Color.CYAN);
+            else if (i == mid)
+                g2d.setColor(Color.GREEN);
             else
                 g2d.setColor(Color.GRAY);
             g2d.fillRect(i * w, h - list.get(i), w - 1, list.get(i));
@@ -117,9 +121,10 @@ public class RandomCanvas extends JPanel implements AlgoCanvas {
             sample.setText(" 样本总数：" + c);
         } else {
             low = (int) args[0];
-            high = (int) args[1];
-            pivot = (int) args[2];
-            int rw = (int) args[3];
+            mid = (int) args[1];
+            high = (int) args[2];
+            pivot = (int) args[3];
+            int rw = (int) args[4];
             if ((rw & 0b01) == 0b01)
                 readCount++;
             if ((rw & 0b10) == 0b10)

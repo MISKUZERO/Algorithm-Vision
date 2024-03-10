@@ -8,6 +8,7 @@ import view.data.AlgoData;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.locks.LockSupport;
 
 /**
@@ -30,7 +31,9 @@ public class AlgoController {
     private static final int SCALE = 10;//增量
     private static final int DELAY = 160;//延迟（正常播放速度）
     private static final int FAST_WARD = 10;//快进延迟（快进播放速度）
-    //private static final CountDownLatch latch = new CountDownLatch(CANVAS_COUNT);
+
+    private static final CountDownLatch latch = new CountDownLatch(CANVAS_COUNT);//同步锁
+    private static final CountDownLatch latch1 = new CountDownLatch(CANVAS_COUNT);//同步锁
     private static int delay = DELAY;
     private static boolean pause;
     private static Thread[] threads;
@@ -93,13 +96,25 @@ public class AlgoController {
             }
         });
         threads = new Thread[CANVAS_COUNT];
-        threads[0] = new Thread(() -> run(new AlgoArray(N)));
-        threads[1] = new Thread(() -> run1(new AlgoArray(N)));
+        threads[0] = new Thread(() -> {
+            try {
+                run(new AlgoArray(N));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        threads[1] = new Thread(() -> {
+            try {
+                run1(new AlgoArray(N));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
         for (Thread thread : threads)
             thread.start();
     }
 
-    private static void run(AlgoData data) {
+    private static void run(AlgoData data) throws InterruptedException {
         int tid = 0;
         Random random = new Random();
         AlgoArray arr = (AlgoArray) data;
@@ -109,11 +124,17 @@ public class AlgoController {
             arr.set(index, arr.get(index) + SCALE);
             update(tid, data, r % CANVAS_EDGE, (r >>> 16) % CANVAS_EDGE);
         }
+        latch.countDown();
+        latch.await();//等待就绪
+        Thread.sleep(3000);
         firstPivotQuickSort(tid, false, (AlgoArray) data, 0, N - 1);
+        latch1.countDown();
+        latch1.await();//等待就绪
+        Thread.sleep(3000);
         firstPivotQuickSort(tid, true, (AlgoArray) data, 0, N - 1);
     }
 
-    private static void run1(AlgoData data) {
+    private static void run1(AlgoData data) throws InterruptedException {
         int tid = 1;
         AlgoArray arr = (AlgoArray) data;
         for (int i = 0; i < TEST_COUNT; i++) {
@@ -122,7 +143,13 @@ public class AlgoController {
             arr.set(index, arr.get(index) + SCALE);
             update(tid, data, r % CANVAS_EDGE, (r >>> 16) % CANVAS_EDGE);
         }
+        latch.countDown();
+        latch.await();//等待就绪
+        Thread.sleep(3000);
         randomPivotQuickSort(tid, false, (AlgoArray) data, 0, N - 1);
+        latch1.countDown();
+        latch1.await();//等待就绪
+        Thread.sleep(3000);
         randomPivotQuickSort(tid, true, (AlgoArray) data, 0, N - 1);
     }
 

@@ -1,6 +1,6 @@
 package view;
 
-import algo.SquareMidRandom;
+import algo.SquMidRandom;
 import view.component.AlgoFrame;
 import view.data.AlgoArray;
 
@@ -8,6 +8,11 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class AlgoSupplier {
+
+    public static int upFloorDiv(int x, int y) {
+        int r = x / y;
+        return r * y == x ? r : r + 1;
+    }
 
     public static void jdkRan(int tid, AlgoArray arr, int testCount, int scale) {
         Random random = new Random();
@@ -23,7 +28,7 @@ public class AlgoSupplier {
     public static void squMidRan(int tid, AlgoArray arr, int testCount, int scale) {
         int capacity = arr.capacity();
         for (int i = 0; i < testCount; i++) {
-            int r = SquareMidRandom.nextInt(Integer.MAX_VALUE);
+            int r = SquMidRandom.nextInt(Integer.MAX_VALUE);
             int index = r % capacity;
             arr.set(index, arr.get(index) + scale);
             AlgoFrame.updateData(tid, arr, r % AlgoController.CANVAS_EDGE, (r >>> 16) % AlgoController.CANVAS_EDGE);
@@ -46,6 +51,69 @@ public class AlgoSupplier {
         }
     }
 
+    public static void mergeSort(int tid, AlgoArray arr, int begin, int end, AlgoArray tmp) {
+        if (begin < end) {
+            int mid = (end + begin) >> 1;
+            mergeSort(tid, arr, begin, mid, tmp);
+            mergeSort(tid, arr, mid + 1, end, tmp);
+            int m = mid + 1, len = end + 1;
+            for (int i = begin; i < len; i++) {
+                tmp.set(i, arr.get(i));
+                AlgoFrame.updateData(tid, arr, i, -1, -1, -100, 3);
+            }
+            int i = begin, j = m, k = begin;
+            while (i != m && j != len) {
+                AlgoFrame.updateData(tid, arr, i, k, j, -100, 1);
+                AlgoFrame.updateData(tid, arr, i, k, j, -100, 1);
+                if (tmp.get(i) < tmp.get(j))
+                    arr.set(k++, tmp.get(i++));
+                else
+                    arr.set(k++, tmp.get(j++));
+                AlgoFrame.updateData(tid, arr, i, k, j, -100, 3);
+            }
+            while (i != m) {
+                arr.set(k++, tmp.get(i++));
+                AlgoFrame.updateData(tid, arr, i, k, j, -100, 3);
+            }
+            while (j != len) {
+                arr.set(k++, tmp.get(j++));
+                AlgoFrame.updateData(tid, arr, i, k, j, -100, 3);
+            }
+        }
+    }
+
+    public static void antiMergeSort(int tid, AlgoArray arr, int begin, int end, AlgoArray tmp) {
+        if (begin < end) {
+            int mid = (end + begin) >> 1;
+            antiMergeSort(tid, arr, begin, mid, tmp);
+            antiMergeSort(tid, arr, mid + 1, end, tmp);
+            int m = mid + 1, len = end + 1;
+            for (int i = begin; i < len; i++) {
+                tmp.set(i, arr.get(i));
+                AlgoFrame.updateData(tid, arr, i, -1, -1, -100, 3);
+            }
+            int i = begin, j = m, k = begin;
+            while (i != m && j != len) {
+                AlgoFrame.updateData(tid, arr, i, k, j, -100, 1);
+                AlgoFrame.updateData(tid, arr, i, k, j, -100, 1);
+                if (tmp.get(i) > tmp.get(j))
+                    arr.set(k++, tmp.get(i++));
+                else
+                    arr.set(k++, tmp.get(j++));
+                AlgoFrame.updateData(tid, arr, i, k, j, -100, 3);
+            }
+            while (i != m) {
+                arr.set(k++, tmp.get(i++));
+                AlgoFrame.updateData(tid, arr, i, k, j, -100, 3);
+            }
+            while (j != len) {
+                arr.set(k++, tmp.get(j++));
+                AlgoFrame.updateData(tid, arr, i, k, j, -100, 3);
+            }
+        }
+    }
+
+
     public static void fixedPivQSort(int tid, boolean asc, AlgoArray arr, int begin, int end) {
         if (begin < end) {
             int pivot = arr.get(begin);
@@ -62,11 +130,13 @@ public class AlgoSupplier {
         if (begin < end) {
             int pivotIndex = (int) (Math.random() * (end - begin + 1)) + begin;
             int pivot = arr.get(pivotIndex);
+            AlgoFrame.updateData(tid, arr, -1, -1, pivotIndex, pivot, 1);
             int t = arr.get(begin);
+            AlgoFrame.updateData(tid, arr, begin, -1, -1, pivot, 1);
             arr.set(begin, pivot);
-            AlgoFrame.updateData(tid, arr, begin, -1, -1, pivot, 3);
+            AlgoFrame.updateData(tid, arr, begin, -1, -1, pivot, 2);
             arr.set(pivotIndex, t);
-            AlgoFrame.updateData(tid, arr, -1, -1, pivotIndex, pivot, 3);
+            AlgoFrame.updateData(tid, arr, -1, -1, pivotIndex, pivot, 2);
             if (asc)
                 pivotIndex = divide(tid, arr, begin, end, pivot);
             else

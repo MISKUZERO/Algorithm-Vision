@@ -3,7 +3,7 @@ package algo;
 /**
  * @author MiskuZero
  */
-public class SquareMidRandom {
+public class SquMidRandom {
 
     private static long seed;
 

@@ -8,32 +8,30 @@ import java.util.Arrays;
 public class QuickSort {
 
     public static void main(String[] args) {
-        int len = 10000000;
+        int len = 100000000;
         int[] arr = new int[len];
         for (int j = 0; j < len; j++) {
-            arr[j] = (int) (Math.random() * len / 100);
+            arr[j] = (int) (Math.random() * len);
         }
         int[] arr1 = Arrays.copyOf(arr, len);
-
         long l = System.currentTimeMillis();
-        QSort.threeInsertGather(arr1, 0, len - 1);
+        MergeSort.doSort(arr1, 0, len - 1, new int[len]);
         long l1 = System.currentTimeMillis();
         System.out.println(l1 - l + "ms");
         l = System.currentTimeMillis();
-        QuickSort.gatherEqu(arr, 0, len - 1);
+        QuickSort.fixedPivot(arr, 0, len - 1);
         l1 = System.currentTimeMillis();
         System.out.println(l1 - l + "ms");
-
         System.out.println(Arrays.equals(arr, arr1));
 
     }
 
-    public static void firstPivot(int[] arr, int begin, int end) {
+    public static void fixedPivot(int[] arr, int begin, int end) {
         if (begin < end) {
             int pivot = arr[begin];
             pivot = divide(arr, begin, end, pivot);
-            firstPivot(arr, begin, pivot - 1);
-            firstPivot(arr, pivot + 1, end);
+            fixedPivot(arr, begin, pivot - 1);
+            fixedPivot(arr, pivot + 1, end);
         }
     }
 
@@ -104,6 +102,72 @@ public class QuickSort {
         }
         arr[low] = pivot;
         return low;
+    }
+
+    public static void threeInsertGather(int[] arr, int begin, int end) {
+        if (end - begin < 40) {//插排，递归出口
+            InsertSort.doSort(arr, begin, end);
+            return;
+        }
+        //三数取中
+        int mid = begin + (end + -begin) / 2;
+        if (arr[mid] > arr[end]) {
+            int t = arr[mid];
+            arr[mid] = arr[end];
+            arr[end] = t;
+        }
+        if (arr[begin] > arr[end]) {
+            int t = arr[begin];
+            arr[begin] = arr[end];
+            arr[end] = t;
+        }
+        if (arr[mid] > arr[begin]) {
+            int t = arr[begin];
+            arr[begin] = arr[mid];
+            arr[mid] = t;
+        }
+        //进行左右分组（处理相等元素）
+        int l = begin, r = end, lBound = begin, rBound = end, lLen = 0, rLen = 0;
+        int pivot = arr[l];
+        while (l != r) {
+            while (l != r && arr[r] >= pivot) {
+                if (arr[r] == pivot) { //处理相等元素
+                    arr[r] = arr[rBound];
+                    arr[rBound--] = pivot;
+                    rLen++;
+                }
+                r--;
+            }
+            arr[l] = arr[r];
+            while (l != r && arr[l] <= pivot) {
+                if (arr[l] == pivot) {
+                    arr[l] = arr[lBound];
+                    arr[lBound++] = pivot;
+                    lLen++;
+                }
+                l++;
+            }
+            arr[r] = arr[l];
+        }
+        arr[l] = pivot;
+        //一次快排结束
+        //把与基准元pivot相同的元素移到最终位置周围
+        int i = l - 1;
+        int j = begin;
+        while (j < lBound && arr[i] != pivot) {
+            int t = arr[i];
+            arr[i--] = arr[j];
+            arr[j++] = t;
+        }
+        i = r + 1;
+        j = end;
+        while (j > rBound && arr[i] != pivot) {
+            int t = arr[i];
+            arr[i++] = arr[j];
+            arr[j--] = t;
+        }
+        threeInsertGather(arr, begin, l - lLen - 1);
+        threeInsertGather(arr, l + rLen + 1, end);
     }
 
 }

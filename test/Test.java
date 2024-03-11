@@ -1,4 +1,5 @@
 import view.AlgoController;
+import view.AlgoSupplier;
 
 /**
  * @author MiskuZero

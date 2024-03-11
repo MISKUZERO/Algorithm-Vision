@@ -48,23 +48,28 @@ public class RanAndSortCanvas extends AlgoCanvas {
         setLayout(new GridLayout(height / (AlgoController.CANVAS_TEXT_SIZE * 5 / 4), 1));//布局
         //标签
         JLabel title = new JLabel(name);
+        JLabel length = new JLabel();
         value = new JLabel();
         sample = new JLabel();
         read = new JLabel();
         write = new JLabel();
         title.setForeground(Color.CYAN);
+        length.setForeground(Color.WHITE);
         value.setForeground(Color.WHITE);
         sample.setForeground(Color.WHITE);
         read.setForeground(Color.WHITE);
         write.setForeground(Color.WHITE);
         title.setFont(new Font("楷体", Font.BOLD, AlgoController.CANVAS_TEXT_SIZE));
+        length.setFont(new Font("楷体", Font.PLAIN, AlgoController.CANVAS_TEXT_SIZE));
         value.setFont(new Font("楷体", Font.PLAIN, AlgoController.CANVAS_TEXT_SIZE));
         sample.setFont(new Font("楷体", Font.PLAIN, AlgoController.CANVAS_TEXT_SIZE));
         read.setFont(new Font("楷体", Font.PLAIN, AlgoController.CANVAS_TEXT_SIZE));
         write.setFont(new Font("楷体", Font.PLAIN, AlgoController.CANVAS_TEXT_SIZE));
+        length.setText(" 数据量：" + AlgoController.DATA_LENGTH);
         add(title);
-        add(value);
+        add(length);
         add(sample);
+        add(value);
         add(read);
         add(write);
         //背景

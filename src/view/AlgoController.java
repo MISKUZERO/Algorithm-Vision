@@ -30,15 +30,16 @@ public class AlgoController {
     //画布中最大的正方形棱长（保证是画布是正方形）
     public static final int CANVAS_EDGE = Math.min(FRAME_WIDTH / CANVAS_COUNT, FRAME_HEIGHT / CANVAS_ROWS);
     //数据参数
-    public static final int N = 250;//数组长度
+    public static final int DATA_LENGTH = 125;//数据长度
     public static final int SCALE = 10;//增量
     public static final int DELAY = 160;//延迟（正常播放速度）
     public static final int FAST_WARD = 10;//快进延迟（快进播放速度）
-    public static final int TEST_COUNT = 5000;//重复次数
+    public static final int TEST_COUNT = 2500;//重复次数
     //线程相关
     private static final Thread[] THREADS = new Thread[CANVAS_COUNT];
     private static final CountDownLatch LATCH = new CountDownLatch(CANVAS_COUNT);//同步锁
     private static final CountDownLatch LATCH_1 = new CountDownLatch(CANVAS_COUNT);//同步锁
+    private static final CountDownLatch LATCH_2 = new CountDownLatch(CANVAS_COUNT);//同步锁
 
     public static void launch() {
         try {
@@ -48,28 +49,28 @@ public class AlgoController {
         }
         THREADS[0] = new Thread(() -> {
             try {
-                run(new AlgoArray(N));
+                run(new AlgoArray(DATA_LENGTH));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
         THREADS[1] = new Thread(() -> {
             try {
-                run1(new AlgoArray(N));
+                run1(new AlgoArray(DATA_LENGTH));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
         THREADS[2] = new Thread(() -> {
             try {
-                run2(new AlgoArray(N));
+                run2(new AlgoArray(DATA_LENGTH));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
         THREADS[3] = new Thread(() -> {
             try {
-                run3(new AlgoArray(N));
+                run3(new AlgoArray(DATA_LENGTH));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -85,15 +86,25 @@ public class AlgoController {
         LATCH.countDown();
         LATCH.await();//等待就绪
         Thread.sleep(3000);
-        AlgoSupplier.fixedPivQSort(tid, false, (AlgoArray) data, 0, N - 1);
+        AlgoSupplier.fixedPivQSort(tid, false, (AlgoArray) data, 0, DATA_LENGTH - 1);
         AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, 0);
         LATCH_1.countDown();
         LATCH_1.await();//等待就绪
         Thread.sleep(1500);
         AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, -1);//重置读写
         Thread.sleep(1500);
-        AlgoSupplier.fixedPivQSort(tid, true, (AlgoArray) data, 0, N - 1);
+        AlgoSupplier.fixedPivQSort(tid, true, (AlgoArray) data, 0, DATA_LENGTH - 1);
         AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, 0);
+        LATCH_2.countDown();
+        LATCH_2.await();//等待就绪
+        Thread.sleep(3000);
+        AlgoSupplier.mountain(tid, arr);
+        Thread.sleep(1500);
+        AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, -1);//重置读写
+        Thread.sleep(1500);
+        AlgoSupplier.fixedPivQSort(tid, true, (AlgoArray) data, 0, DATA_LENGTH - 1);
+        AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, 0);
+
     }
 
     private static void run1(AlgoData data) throws InterruptedException {
@@ -103,14 +114,23 @@ public class AlgoController {
         LATCH.countDown();
         LATCH.await();//等待就绪
         Thread.sleep(3000);
-        AlgoSupplier.ranPivQSort(tid, false, (AlgoArray) data, 0, N - 1);
+        AlgoSupplier.ranPivQSort(tid, false, (AlgoArray) data, 0, DATA_LENGTH - 1);
         AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, 0);
         LATCH_1.countDown();
         LATCH_1.await();//等待就绪
         Thread.sleep(1500);
         AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, -1);//重置读写
         Thread.sleep(1500);
-        AlgoSupplier.ranPivQSort(tid, true, (AlgoArray) data, 0, N - 1);
+        AlgoSupplier.ranPivQSort(tid, true, (AlgoArray) data, 0, DATA_LENGTH - 1);
+        AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, 0);
+        LATCH_2.countDown();
+        LATCH_2.await();//等待就绪
+        Thread.sleep(3000);
+        AlgoSupplier.mountain(tid, arr);
+        Thread.sleep(1500);
+        AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, -1);//重置读写
+        Thread.sleep(1500);
+        AlgoSupplier.ranPivQSort(tid, true, (AlgoArray) data, 0, DATA_LENGTH - 1);
         AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, 0);
     }
 
@@ -121,14 +141,23 @@ public class AlgoController {
         LATCH.countDown();
         LATCH.await();//等待就绪
         Thread.sleep(3000);
-        AlgoSupplier.antiGaEquQSort(tid, (AlgoArray) data, 0, N - 1);
+        AlgoSupplier.antiGaEquQSort(tid, (AlgoArray) data, 0, DATA_LENGTH - 1);
         AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, 0);
         LATCH_1.countDown();
         LATCH_1.await();//等待就绪
         Thread.sleep(1500);
         AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, -1);//重置读写
         Thread.sleep(1500);
-        AlgoSupplier.gaEquQSort(tid, (AlgoArray) data, 0, N - 1);
+        AlgoSupplier.gaEquQSort(tid, (AlgoArray) data, 0, DATA_LENGTH - 1);
+        AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, 0);
+        LATCH_2.countDown();
+        LATCH_2.await();//等待就绪
+        Thread.sleep(3000);
+        AlgoSupplier.mountain(tid, arr);
+        Thread.sleep(1500);
+        AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, -1);//重置读写
+        Thread.sleep(1500);
+        AlgoSupplier.gaEquQSort(tid, (AlgoArray) data, 0, DATA_LENGTH - 1);
         AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, 0);
     }
 
@@ -139,14 +168,23 @@ public class AlgoController {
         LATCH.countDown();
         LATCH.await();//等待就绪
         Thread.sleep(3000);
-        AlgoSupplier.antiTInsGaQSort(tid, (AlgoArray) data, 0, N - 1);
+        AlgoSupplier.antiTInsGaQSort(tid, (AlgoArray) data, 0, DATA_LENGTH - 1);
         AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, 0);
         LATCH_1.countDown();
         LATCH_1.await();//等待就绪
         Thread.sleep(1500);
         AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, -1);//重置读写
         Thread.sleep(1500);
-        AlgoSupplier.tInsGaQSort(tid, (AlgoArray) data, 0, N - 1);
+        AlgoSupplier.tInsGaQSort(tid, (AlgoArray) data, 0, DATA_LENGTH - 1);
+        AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, 0);
+        LATCH_2.countDown();
+        LATCH_2.await();//等待就绪
+        Thread.sleep(3000);
+        AlgoSupplier.mountain(tid, arr);
+        Thread.sleep(1500);
+        AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, -1);//重置读写
+        Thread.sleep(1500);
+        AlgoSupplier.tInsGaQSort(tid, (AlgoArray) data, 0, DATA_LENGTH - 1);
         AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, 0);
     }
 

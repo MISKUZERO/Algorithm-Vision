@@ -4,6 +4,7 @@ import algo.SquareMidRandom;
 import view.component.AlgoFrame;
 import view.data.AlgoArray;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class AlgoSupplier {
@@ -26,6 +27,22 @@ public class AlgoSupplier {
             int index = r % capacity;
             arr.set(index, arr.get(index) + scale);
             AlgoFrame.updateData(tid, arr, r % AlgoController.CANVAS_EDGE, (r >>> 16) % AlgoController.CANVAS_EDGE);
+        }
+    }
+
+    public static void mountain(int tid, AlgoArray arr) {
+        int capacity = arr.capacity();
+        int[] ints = new int[capacity];
+        for (int i = 0; i < capacity; i++)
+            ints[i] = arr.get(i);
+        Arrays.sort(ints);
+        for (int i = 0, j = 0, k = capacity - 1; i < capacity; ) {
+            arr.set(j++, ints[i++]);
+            AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, 0);
+            if (i < capacity) {
+                arr.set(k--, ints[i++]);
+                AlgoFrame.updateData(tid, arr, -1, -1, -1, -100, 0);
+            }
         }
     }
 

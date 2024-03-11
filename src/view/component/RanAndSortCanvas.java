@@ -12,7 +12,7 @@ import java.awt.image.BufferedImage;
 /**
  * @author MiskuZero
  */
-public class RanArrCanvas extends AlgoCanvas {
+public class RanAndSortCanvas extends AlgoCanvas {
 
     private final int width;
     private final int height;
@@ -35,14 +35,16 @@ public class RanArrCanvas extends AlgoCanvas {
     private int mid;
     private int high;
     private int pivot;
+    private int extra;
 
-    public RanArrCanvas(String name, int width, int height) {
+    public RanAndSortCanvas(String name, int width, int height) {
         this.width = width;
         this.height = height;
         this.low = -1;
         this.mid = -1;
         this.high = -1;
         this.pivot = -100;
+        this.extra = -1;
         setLayout(new GridLayout(height / (AlgoController.CANVAS_TEXT_SIZE * 5 / 4), 1));//布局
         //标签
         JLabel title = new JLabel(name);
@@ -96,6 +98,8 @@ public class RanArrCanvas extends AlgoCanvas {
             else if (i == high)
                 g2d.setColor(Color.CYAN);
             else if (i == mid)
+                g2d.setColor(Color.YELLOW);
+            else if (i == extra)
                 g2d.setColor(Color.GREEN);
             else
                 g2d.setColor(Color.GRAY);
@@ -126,6 +130,10 @@ public class RanArrCanvas extends AlgoCanvas {
             high = (int) args[2];
             pivot = (int) args[3];
             int rw = (int) args[4];
+            if (args.length > 5)
+                extra = (int) args[5];
+            else
+                extra = -1;
             if ((rw & 0b01) == 0b01)
                 readCount++;
             if ((rw & 0b10) == 0b10)

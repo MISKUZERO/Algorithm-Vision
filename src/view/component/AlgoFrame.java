@@ -25,7 +25,7 @@ public class AlgoFrame extends JFrame {
         addCanvas(canvasClass, canvasWidth, canvasHeight, canvasCount, names);
         LABEL.setForeground(Color.RED);
         LABEL.setFont(new Font("楷体", Font.ITALIC, AlgoController.CANVAS_TEXT_SIZE));
-        CANVAS[canvasCount >> 1].add(LABEL);
+        CANVAS[(canvasCount - 1) >> 1].add(LABEL);//显示在中间的画布上
         pack();
         registerListener();
         setLocationRelativeTo(null);

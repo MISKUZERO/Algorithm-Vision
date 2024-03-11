@@ -1,9 +1,33 @@
 package view;
 
+import algo.SquareMidRandom;
 import view.component.AlgoFrame;
 import view.data.AlgoArray;
 
-public class AlgoImpl {
+import java.util.Random;
+
+public class AlgoSupplier {
+
+    public static void jdkRan(int tid, AlgoArray arr, int testCount, int scale) {
+        Random random = new Random();
+        int capacity = arr.capacity();
+        for (int i = 0; i < testCount; i++) {
+            int r = random.nextInt(Integer.MAX_VALUE);
+            int index = r % capacity;
+            arr.set(index, arr.get(index) + scale);
+            AlgoFrame.updateData(tid, arr, r % AlgoController.CANVAS_EDGE, (r >>> 16) % AlgoController.CANVAS_EDGE);
+        }
+    }
+
+    public static void squMidRan(int tid, AlgoArray arr, int testCount, int scale) {
+        int capacity = arr.capacity();
+        for (int i = 0; i < testCount; i++) {
+            int r = SquareMidRandom.nextInt(Integer.MAX_VALUE);
+            int index = r % capacity;
+            arr.set(index, arr.get(index) + scale);
+            AlgoFrame.updateData(tid, arr, r % AlgoController.CANVAS_EDGE, (r >>> 16) % AlgoController.CANVAS_EDGE);
+        }
+    }
 
     public static void fixedPivQSort(int tid, boolean asc, AlgoArray arr, int begin, int end) {
         if (begin < end) {
@@ -276,4 +300,216 @@ public class AlgoImpl {
             }
         }
     }
+
+    public static void tInsGaQSort(int tid, AlgoArray arr, int begin, int end) {
+        if (end - begin < 20) {//插排，递归出口
+            iSortInQSort(tid, arr, begin, end);
+            return;
+        }
+        //三数取中
+        int mid = begin + (end + -begin) / 2;
+        AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 1);
+        AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 1);
+        if (arr.get(mid) > arr.get(end)) {
+            int t = arr.get(mid);
+            AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 1);
+            arr.set(mid, arr.get(end));
+            AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 3);
+            arr.set(end, t);
+            AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 2);
+        }
+        AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 1);
+        AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 1);
+        if (arr.get(begin) > arr.get(end)) {
+            int t = arr.get(begin);
+            AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 1);
+            arr.set(begin, arr.get(end));
+            AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 3);
+            arr.set(end, t);
+            AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 2);
+        }
+        AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 1);
+        AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 1);
+        if (arr.get(mid) > arr.get(begin)) {
+            int t = arr.get(begin);
+            AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 1);
+            arr.set(begin, arr.get(mid));
+            AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 3);
+            arr.set(mid, t);
+            AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 2);
+        }
+        //进行左右分组（处理相等元素）
+        int l = begin, r = end, lBound = begin, rBound = end, lLen = 0, rLen = 0;
+        int pivot = arr.get(l);
+        AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 1, rBound);
+        while (l != r) {
+            AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 1, rBound);
+            while (l != r && arr.get(r) >= pivot) {
+                AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 1, rBound);
+                if (arr.get(r) == pivot) { //处理相等元素
+                    arr.set(r, arr.get(rBound));
+                    AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 3, rBound);
+                    arr.set(rBound--, pivot);
+                    AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 2, rBound);
+                    rLen++;
+                }
+                r--;
+                AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 1, rBound);
+            }
+            arr.set(l, arr.get(r));
+            AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 3, rBound);
+            AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 1, rBound);
+            while (l != r && arr.get(l) <= pivot) {
+                AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 1, rBound);
+                if (arr.get(l) == pivot) {
+                    arr.set(l, arr.get(lBound));
+                    AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 3, rBound);
+                    arr.set(lBound++, pivot);
+                    AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 2, rBound);
+                    lLen++;
+                }
+                l++;
+                AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 1, rBound);
+            }
+            arr.set(r, arr.get(l));
+            AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 3, rBound);
+        }
+        arr.set(l, pivot);
+        AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 2, rBound);
+        //一次快排结束
+        //把与基准元pivot相同的元素移到最终位置周围
+        int i = l - 1;
+        int j = begin;
+        AlgoFrame.updateData(tid, arr, j, lBound, i, pivot, 1, rBound);
+        while (j < lBound && arr.get(i) != pivot) {
+            int t = arr.get(i);
+            AlgoFrame.updateData(tid, arr, j, lBound, i, pivot, 1, rBound);
+            arr.set(i--, arr.get(j));
+            AlgoFrame.updateData(tid, arr, j, lBound, i, pivot, 3, rBound);
+            arr.set(j++, t);
+            AlgoFrame.updateData(tid, arr, j, lBound, i, pivot, 2, rBound);
+            AlgoFrame.updateData(tid, arr, j, lBound, i, pivot, 1, rBound);
+        }
+        i = r + 1;
+        j = end;
+        AlgoFrame.updateData(tid, arr, i, lBound, j, pivot, 1, rBound);
+        while (j > rBound && arr.get(i) != pivot) {
+            int t = arr.get(i);
+            AlgoFrame.updateData(tid, arr, i, lBound, j, pivot, 1, rBound);
+            arr.set(i++, arr.get(j));
+            AlgoFrame.updateData(tid, arr, i, lBound, j, pivot, 3, rBound);
+            arr.set(j--, t);
+            AlgoFrame.updateData(tid, arr, i, lBound, j, pivot, 2, rBound);
+            AlgoFrame.updateData(tid, arr, i, lBound, j, pivot, 1, rBound);
+        }
+        tInsGaQSort(tid, arr, begin, l - lLen - 1);
+        tInsGaQSort(tid, arr, l + rLen + 1, end);
+    }
+
+    public static void antiTInsGaQSort(int tid, AlgoArray arr, int begin, int end) {
+        if (end - begin < 20) {//插排，递归出口
+            antiISortInQSort(tid, arr, begin, end);
+            return;
+        }
+        //三数取中
+        int mid = begin + (end + -begin) / 2;
+        AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 1);
+        AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 1);
+        if (arr.get(mid) > arr.get(end)) {
+            int t = arr.get(mid);
+            AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 1);
+            arr.set(mid, arr.get(end));
+            AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 3);
+            arr.set(end, t);
+            AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 2);
+        }
+        AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 1);
+        AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 1);
+        if (arr.get(begin) > arr.get(end)) {
+            int t = arr.get(begin);
+            AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 1);
+            arr.set(begin, arr.get(end));
+            AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 3);
+            arr.set(end, t);
+            AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 2);
+        }
+        AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 1);
+        AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 1);
+        if (arr.get(mid) > arr.get(begin)) {
+            int t = arr.get(begin);
+            AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 1);
+            arr.set(begin, arr.get(mid));
+            AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 3);
+            arr.set(mid, t);
+            AlgoFrame.updateData(tid, arr, begin, mid, end, -100, 2);
+        }
+        //进行左右分组（处理相等元素）
+        int l = begin, r = end, lBound = begin, rBound = end, lLen = 0, rLen = 0;
+        int pivot = arr.get(l);
+        AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 1, rBound);
+        while (l != r) {
+            AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 1, rBound);
+            while (l != r && arr.get(r) <= pivot) {
+                AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 1, rBound);
+                if (arr.get(r) == pivot) { //处理相等元素
+                    arr.set(r, arr.get(rBound));
+                    AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 3, rBound);
+                    arr.set(rBound--, pivot);
+                    AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 2, rBound);
+                    rLen++;
+                }
+                r--;
+                AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 1, rBound);
+            }
+            arr.set(l, arr.get(r));
+            AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 3, rBound);
+            AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 1, rBound);
+            while (l != r && arr.get(l) >= pivot) {
+                AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 1, rBound);
+                if (arr.get(l) == pivot) {
+                    arr.set(l, arr.get(lBound));
+                    AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 3, rBound);
+                    arr.set(lBound++, pivot);
+                    AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 2, rBound);
+                    lLen++;
+                }
+                l++;
+                AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 1, rBound);
+            }
+            arr.set(r, arr.get(l));
+            AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 3, rBound);
+        }
+        arr.set(l, pivot);
+        AlgoFrame.updateData(tid, arr, l, lBound, r, pivot, 2, rBound);
+        //一次快排结束
+        //把与基准元pivot相同的元素移到最终位置周围
+        int i = l - 1;
+        int j = begin;
+        AlgoFrame.updateData(tid, arr, j, lBound, i, pivot, 1, rBound);
+        while (j < lBound && arr.get(i) != pivot) {
+            int t = arr.get(i);
+            AlgoFrame.updateData(tid, arr, j, lBound, i, pivot, 1, rBound);
+            arr.set(i--, arr.get(j));
+            AlgoFrame.updateData(tid, arr, j, lBound, i, pivot, 3, rBound);
+            arr.set(j++, t);
+            AlgoFrame.updateData(tid, arr, j, lBound, i, pivot, 2, rBound);
+            AlgoFrame.updateData(tid, arr, j, lBound, i, pivot, 1, rBound);
+        }
+        i = r + 1;
+        j = end;
+        AlgoFrame.updateData(tid, arr, i, lBound, j, pivot, 1, rBound);
+        while (j > rBound && arr.get(i) != pivot) {
+            int t = arr.get(i);
+            AlgoFrame.updateData(tid, arr, i, lBound, j, pivot, 1, rBound);
+            arr.set(i++, arr.get(j));
+            AlgoFrame.updateData(tid, arr, i, lBound, j, pivot, 3, rBound);
+            arr.set(j--, t);
+            AlgoFrame.updateData(tid, arr, i, lBound, j, pivot, 2, rBound);
+            AlgoFrame.updateData(tid, arr, i, lBound, j, pivot, 1, rBound);
+        }
+        antiTInsGaQSort(tid, arr, begin, l - lLen - 1);
+        antiTInsGaQSort(tid, arr, l + rLen + 1, end);
+    }
+
+
 }

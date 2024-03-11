@@ -15,27 +15,25 @@ import java.util.concurrent.locks.LockSupport;
  * @author MiskuZero
  */
 public class AlgoController {
-
-    private static AlgoFrame frame;
-    //设置
-    private static final String TITLE = "**仰望星空**";
-    private static final String[] CANVAS_NAMES = {
+    //窗口设置
+    public static final String TITLE = "**仰望星空**";
+    public static final String[] CANVAS_NAMES = {
             " 线性同余（JDK） + 固定轴",
             " 平方取中 + 随机轴",
             " 平方取中 + 随机轴&聚集相等元素"};
-    public static final int TEXT_SIZE = 32;//文本尺寸
-    private static final int SCENE_WIDTH = 2000;
-    private static final int SCENE_HEIGHT = 1000;
-    private static final int CANVAS_COUNT = 3;
-    private static final int CANVAS_ROWS = 1;
-    //画布中最大的正方形棱长
+    public static final int SCENE_WIDTH = 2000;
+    public static final int SCENE_HEIGHT = 1000;
+    public static final int CANVAS_COUNT = 3;
+    public static final int CANVAS_ROWS = 1;
+    //画布中最大的正方形棱长（保证是画布是正方形）
     public static final int CANVAS_EDGE = Math.min(SCENE_WIDTH / CANVAS_COUNT, SCENE_HEIGHT / CANVAS_ROWS);
-    //参数
-    private static final int N = 333;//数组长度
-    private static final int TEST_COUNT = 6666;//重复次数
-    private static final int SCALE = 10;//增量
-    private static final int DELAY = 160;//延迟（正常播放速度）
-    private static final int FAST_WARD = 10;//快进延迟（快进播放速度）
+    public static final int TEXT_SIZE = 32;
+    //数据参数
+    public static final int N = 333;//数组长度
+    public static final int SCALE = 10;//增量
+    public static final int DELAY = 160;//延迟（正常播放速度）
+    public static final int FAST_WARD = 10;//快进延迟（快进播放速度）
+    public static final int TEST_COUNT = 6666;//重复次数
 
     private static final CountDownLatch latch = new CountDownLatch(CANVAS_COUNT);//同步锁
     private static final CountDownLatch latch1 = new CountDownLatch(CANVAS_COUNT);//同步锁
@@ -43,6 +41,7 @@ public class AlgoController {
     private static boolean pause;
     private static Thread[] threads;
     private static int mask;
+    private static AlgoFrame frame;
 
     public static void launch() {
         frame = new AlgoFrame(TITLE, CANVAS_EDGE, CANVAS_EDGE, CANVAS_COUNT, CANVAS_ROWS, CANVAS_NAMES);
@@ -126,7 +125,7 @@ public class AlgoController {
             thread.start();
     }
 
-    private static void run(AlgoData data) throws InterruptedException {
+    public static void run(AlgoData data) throws InterruptedException {
         int tid = 0;
         Random random = new Random();
         AlgoArray arr = (AlgoArray) data;
@@ -150,7 +149,7 @@ public class AlgoController {
         update(tid, arr, -1, -1, -1, -100, 0);
     }
 
-    private static void run1(AlgoData data) throws InterruptedException {
+    public static void run1(AlgoData data) throws InterruptedException {
         int tid = 1;
         AlgoArray arr = (AlgoArray) data;
         for (int i = 0; i < TEST_COUNT; i++) {
@@ -173,7 +172,7 @@ public class AlgoController {
         update(tid, arr, -1, -1, -1, -100, 0);
     }
 
-    private static void run2(AlgoData data) throws InterruptedException {
+    public static void run2(AlgoData data) throws InterruptedException {
         int tid = 2;
         AlgoArray arr = (AlgoArray) data;
         for (int i = 0; i < TEST_COUNT; i++) {
@@ -196,7 +195,7 @@ public class AlgoController {
         update(tid, arr, -1, -1, -1, -100, 0);
     }
 
-    private static void quickSort(int tid, boolean asc, AlgoArray arr, int begin, int end) {
+    public static void quickSort(int tid, boolean asc, AlgoArray arr, int begin, int end) {
         if (begin < end) {
             int pivot = arr.get(begin);
             if (asc)
@@ -208,7 +207,7 @@ public class AlgoController {
         }
     }
 
-    private static void ranPivQSort(int tid, boolean asc, AlgoArray arr, int begin, int end) {
+    public static void ranPivQSort(int tid, boolean asc, AlgoArray arr, int begin, int end) {
         if (begin < end) {
             int pivotIndex = (int) (Math.random() * (end - begin + 1)) + begin;
             int pivot = arr.get(pivotIndex);
@@ -226,7 +225,7 @@ public class AlgoController {
         }
     }
 
-    private static int divide(int tid, AlgoArray arr, int begin, int end, int pivot) {
+    public static int divide(int tid, AlgoArray arr, int begin, int end, int pivot) {
         int low = begin, high = end;
         while (low != high) {
             update(tid, arr, -1, -1, high, pivot, 1);
@@ -249,7 +248,7 @@ public class AlgoController {
         return low;
     }
 
-    private static int antiDivide(int tid, AlgoArray arr, int begin, int end, int pivot) {
+    public static int antiDivide(int tid, AlgoArray arr, int begin, int end, int pivot) {
         int low = begin, high = end;
         while (low != high) {
             update(tid, arr, -1, -1, high, pivot, 1);
@@ -426,7 +425,6 @@ public class AlgoController {
         antiGaEquQSort(tid, arr, j + 1, end);
     }
 
-
     public static void iSortInQSort(int tid, AlgoArray arr, int begin, int end) {
         int len = end + 1;
         for (int i = begin + 1; i < len; i++) {
@@ -469,8 +467,7 @@ public class AlgoController {
         }
     }
 
-
-    private static void update(int tid, AlgoData data, Object... args) {
+    public static void update(int tid, AlgoData data, Object... args) {
         if (pause)
             LockSupport.park();
         frame.renderCanvas(tid, data, args);

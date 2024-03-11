@@ -4,6 +4,8 @@ import algo.SquMidRandom;
 import view.component.AlgoFrame;
 import view.data.AlgoArray;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -12,6 +14,13 @@ public class AlgoSupplier {
     public static int upFloorDiv(int x, int y) {
         int r = x / y;
         return r * y == x ? r : r + 1;
+    }
+
+    public static BigDecimal chiSquVal(int[] obs, int[] exps, int scale) {
+        BigDecimal res = new BigDecimal(0);
+        for (int i = 0; i < exps.length; i++)
+            res = res.add(new BigDecimal(obs[i]).add(new BigDecimal(exps[i]).negate()).pow(2).divide(new BigDecimal(exps[i]), scale, RoundingMode.HALF_UP));
+        return res;
     }
 
     public static void jdkRan(int tid, AlgoArray arr, int testCount, int scale) {

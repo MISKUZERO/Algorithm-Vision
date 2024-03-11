@@ -1,5 +1,6 @@
 package view.component;
 
+import view.AlgoController;
 import view.data.AlgoArray;
 import view.data.AlgoData;
 
@@ -10,15 +11,20 @@ import java.awt.*;
 /**
  * @author MiskuZero
  */
-public class ArrayCanvas extends JPanel implements AlgoCanvas {
+public class ArrCanvas extends AlgoCanvas {
 
     private final int width;
     private final int height;
     private AlgoArray list;
 
-    public ArrayCanvas(int width, int height) {
+    public ArrCanvas(String name, int width, int height) {
         this.width = width;
         this.height = height;
+        setLayout(new GridLayout(height / (AlgoController.CANVAS_TEXT_SIZE * 5 / 4), 1));//布局
+        JLabel title = new JLabel(name);
+        title.setForeground(Color.CYAN);
+        title.setFont(new Font("楷体", Font.BOLD, AlgoController.CANVAS_TEXT_SIZE));
+        add(title);
         setBorder(new LineBorder(Color.BLACK));//边框
     }
 

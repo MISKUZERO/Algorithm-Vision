@@ -29,7 +29,7 @@ public class AlgoController {
     public static final int CANVAS_ROWS = 2;
     public static final Class<? extends AlgoCanvas> CANVAS_TYPE = RanAndSortCanvas.class;//画布类型
     //画布中最大的正方形棱长（保证是画布是正方形）
-    public static final int CANVAS_EDGE = Math.min(FRAME_WIDTH / AlgoSupplier.upFloorDiv(CANVAS_COUNT, CANVAS_ROWS), FRAME_HEIGHT / CANVAS_ROWS);
+    public static final int CANVAS_EDGE = Math.min(FRAME_WIDTH / AlgoSupplier.ceilDiv(CANVAS_COUNT, CANVAS_ROWS), FRAME_HEIGHT / CANVAS_ROWS);
     //数据参数
     public static final int DATA_LENGTH = 250;//数据长度
     public static final int SCALE = 5;//增量

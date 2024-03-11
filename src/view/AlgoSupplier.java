@@ -9,13 +9,34 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Random;
 
+/**
+ * @author MiskuZero
+ */
 public class AlgoSupplier {
 
-    public static int upFloorDiv(int x, int y) {
+    /**
+     * 两数相除，结果向上取整
+     *
+     * @param x 被除数
+     * @param y 除数
+     * @return 向上取整后的商
+     */
+    public static int ceilDiv(int x, int y) {
         int r = x / y;
-        return r * y == x ? r : r + 1;
+        if ((x ^ y) > 0 && r * y != x)
+            return r + 1;
+        else
+            return r;
     }
 
+    /**
+     * 计算卡方值，用于卡方检验
+     *
+     * @param obs   频次
+     * @param exps  期望频次
+     * @param scale 计算结果保留的小数位数（四舍五入）
+     * @return 卡方值
+     */
     public static BigDecimal chiSquVal(int[] obs, int[] exps, int scale) {
         BigDecimal res = new BigDecimal(0);
         for (int i = 0; i < exps.length; i++)
@@ -44,6 +65,13 @@ public class AlgoSupplier {
         }
     }
 
+    /**
+     * 将数组按照数值排列成“山形”，即数组中心值最大，离数组中心越远的数值越小<p>
+     * 主要的用来模拟一些排序算法的极端情况，例如固定轴和取三数中间值为轴的快速排序算法
+     *
+     * @param tid 渲染的线程ID
+     * @param arr 待排列的数组
+     */
     public static void mountain(int tid, AlgoArray arr) {
         int capacity = arr.capacity();
         int[] ints = new int[capacity];

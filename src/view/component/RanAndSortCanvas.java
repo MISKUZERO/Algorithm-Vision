@@ -16,14 +16,21 @@ public class RanAndSortCanvas extends AlgoCanvas {
 
     private final int width;
     private final int height;
+    private final BufferedImage bufferedImage;
     private final JLabel title;
     private final JLabel length;
     private final JLabel value;
     private final JLabel sample;
     private final JLabel read;
     private final JLabel write;
-    private final BufferedImage bufferedImage;
+    private final String titleText;
+    private final String lenText;
+    private String valText;
+    private String samText;
+    private String rText;
+    private String wText;
     private AlgoArray list;
+    private boolean showText;
     //随机点坐标
     private int x;
     private int y;
@@ -42,6 +49,9 @@ public class RanAndSortCanvas extends AlgoCanvas {
     public RanAndSortCanvas(String name, int width, int height) {
         this.width = width;
         this.height = height;
+        this.titleText = name;
+        this.lenText = " 数据量：" + AlgoController.DATA_LENGTH;
+        this.showText = true;
         this.low = -1;
         this.mid = -1;
         this.high = -1;
@@ -67,7 +77,7 @@ public class RanAndSortCanvas extends AlgoCanvas {
         sample.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
         read.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
         write.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
-        length.setText(" 数据量：" + AlgoController.DATA_LENGTH);
+        length.setText(lenText);
         add(title);
         add(length);
         add(sample);
@@ -129,8 +139,14 @@ public class RanAndSortCanvas extends AlgoCanvas {
             this.y = y;
             if (x * x + y * y < AlgoController.CANVAS_EDGE * AlgoController.CANVAS_EDGE)
                 interCount++;
-            value.setText(" π ≈ " + ((double) (interCount << 2) / c));
-            sample.setText(" 样本总数：" + c);
+            String vt = " π ≈ " + ((double) (interCount << 2) / c);
+            String st = " 样本总数：" + c;
+            valText = vt;
+            samText = st;
+            if (showText) {
+                value.setText(vt);
+                sample.setText(st);
+            }
         } else {
             low = (int) args[0];
             mid = (int) args[1];
@@ -149,8 +165,14 @@ public class RanAndSortCanvas extends AlgoCanvas {
                 readCount = 0;
                 writeCount = 0;
             }
-            read.setText(" 读次数：" + readCount);
-            write.setText(" 写次数：" + writeCount);
+            String rt = " 读次数：" + readCount;
+            String wt = " 写次数：" + writeCount;
+            rText = rt;
+            wText = wt;
+            if (showText) {
+                read.setText(rt);
+                write.setText(wt);
+            }
         }
         repaint();
     }
@@ -164,6 +186,28 @@ public class RanAndSortCanvas extends AlgoCanvas {
         sample.setFont(new Font("楷体", Font.PLAIN, textSize));
         read.setFont(new Font("楷体", Font.PLAIN, textSize));
         write.setFont(new Font("楷体", Font.PLAIN, textSize));
+    }
+
+    @Override
+    public void showText() {
+        showText = true;
+        title.setText(titleText);
+        length.setText(lenText);
+        value.setText(valText);
+        sample.setText(samText);
+        read.setText(rText);
+        write.setText(wText);
+    }
+
+    @Override
+    public void closeText() {
+        showText = false;
+        title.setText("");
+        length.setText("");
+        value.setText("");
+        sample.setText("");
+        read.setText("");
+        write.setText("");
     }
 
     @Override

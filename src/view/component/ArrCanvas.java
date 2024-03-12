@@ -16,12 +16,14 @@ public class ArrCanvas extends AlgoCanvas {
     private final int width;
     private final int height;
     private final JLabel title;
+    private final String titleText;
     private AlgoArray list;
 
     public ArrCanvas(String name, int width, int height) {
         this.width = width;
         this.height = height;
         setLayout(new GridLayout(height / (AlgoController.TEXT_SIZE * 5 / 4), 1));//布局
+        titleText = name;
         title = new JLabel(name);
         title.setForeground(Color.CYAN);
         title.setFont(new Font("楷体", Font.BOLD, AlgoController.TEXT_SIZE));
@@ -63,6 +65,16 @@ public class ArrCanvas extends AlgoCanvas {
     public void adjustTextSize(int textSize) {
         setLayout(new GridLayout(height / (textSize * 5 / 4), 1));
         title.setFont(new Font("楷体", Font.BOLD, textSize));
+    }
+
+    @Override
+    public void showText() {
+        title.setText(titleText);
+    }
+
+    @Override
+    public void closeText() {
+        title.setText("");
     }
 }
 

@@ -22,4 +22,14 @@ public abstract class AlgoCanvas extends JPanel {
      * @param textSize 新的字体大小
      */
     public abstract void adjustTextSize(int textSize);
+
+    /**
+     * 展示文本
+     */
+    public abstract void showText();
+
+    /**
+     * 关闭文本
+     */
+    public abstract void closeText();
 }

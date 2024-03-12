@@ -13,21 +13,25 @@ import java.util.concurrent.locks.LockSupport;
 public class AlgoFrame extends JFrame {
 
     private static final AlgoCanvas[] CANVAS = new AlgoCanvas[AlgoController.CANVAS_COUNT];
-    private static final JLabel LABEL = new JLabel();
+    private static final JLabel STATE = new JLabel();
+    private static String stateText;
     private static int textSize = AlgoController.TEXT_SIZE;
     private static int delay = AlgoController.DELAY;
     private static int mask;
 
     private static boolean pause;
+    private static boolean showText;
 
     public AlgoFrame(String title, Class<? extends AlgoCanvas> canvasClass, int canvasWidth, int canvasHeight, int canvasCount, int canvasRows, String[] names) throws Exception {
         super(title);
+        showText = true;
+        stateText = "";
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridLayout(canvasRows, 0));
         addCanvas(canvasClass, canvasWidth, canvasHeight, canvasCount, names);
-        LABEL.setForeground(Color.RED);
-        LABEL.setFont(new Font("楷体", Font.ITALIC, AlgoController.TEXT_SIZE));
-        CANVAS[(canvasCount - 1) >> 1].add(LABEL);//显示在中间的画布上
+        STATE.setForeground(Color.RED);
+        STATE.setFont(new Font("楷体", Font.ITALIC, AlgoController.TEXT_SIZE));
+        CANVAS[(canvasCount - 1) >> 1].add(STATE);//显示在中间的画布上
         pack();
         registerListener();
         setLocationRelativeTo(null);
@@ -57,21 +61,29 @@ public class AlgoFrame extends JFrame {
                         }
                     } else {
                         delay = AlgoController.FAST_WARD;
-                        LABEL.setForeground(Color.GREEN);
-                        LABEL.setText(" 16×");
+                        String st = " 16×";
+                        stateText = st;
+                        if (showText) {
+                            STATE.setForeground(Color.GREEN);
+                            STATE.setText(st);
+                        }
                     }
                     return;
                 }
                 if (keyCode == KeyEvent.VK_ADD) {
-                    if (textSize != AlgoController.TEXT_MAX_SIZE)
-                        textSize++;
-                    adjustTextSize(textSize);
+                    if (showText) {
+                        if (textSize != AlgoController.TEXT_MAX_SIZE)
+                            textSize++;
+                        adjustTextSize(textSize);
+                    }
                     return;
                 }
                 if (keyCode == KeyEvent.VK_SUBTRACT) {
-                    if (textSize != AlgoController.TEXT_MIN_SIZE)
-                        textSize--;
-                    adjustTextSize(textSize);
+                    if (showText) {
+                        if (textSize != AlgoController.TEXT_MIN_SIZE)
+                            textSize--;
+                        adjustTextSize(textSize);
+                    }
                 }
             }
 
@@ -82,11 +94,30 @@ public class AlgoFrame extends JFrame {
                     delay = AlgoController.DELAY;//重置播放速度
                     pause = !pause;
                     if (pause) {
-                        LABEL.setForeground(Color.RED);
-                        LABEL.setText(" pause");
+                        String st = " pause";
+                        stateText = st;
+                        if (showText) {
+                            STATE.setForeground(Color.RED);
+                            STATE.setText(st);
+                        }
                     } else {
-                        LABEL.setText("");
+                        String st = "";
+                        stateText = st;
+                        STATE.setText(st);
                         AlgoController.resume();
+                    }
+                    return;
+                }
+                if (keyCode == KeyEvent.VK_DIVIDE) {//数字键盘“除号”打开或关闭文本
+                    showText = !showText;
+                    if (showText) {
+                        STATE.setText(stateText);
+                        for (AlgoCanvas canvas : CANVAS)
+                            canvas.showText();
+                    } else {
+                        STATE.setText("");
+                        for (AlgoCanvas canvas : CANVAS)
+                            canvas.closeText();
                     }
                     return;
                 }
@@ -98,17 +129,25 @@ public class AlgoFrame extends JFrame {
                 } else {
                     if (keyCode == KeyEvent.VK_RIGHT) {
                         delay = AlgoController.DELAY;
-                        LABEL.setText("");
+                        String st = "";
+                        stateText = st;
+                        STATE.setText(st);
                         return;
                     }
-                    if (keyCode == KeyEvent.VK_MULTIPLY)//小键盘上的右上角”乘号“满速运行（160倍速）
+                    if (keyCode == KeyEvent.VK_MULTIPLY)//数字键盘上的右上角”乘号“满速运行（160倍速）
                         if (delay == 1) {
                             delay = AlgoController.DELAY;
-                            LABEL.setText("");
+                            String st = "";
+                            stateText = st;
+                            STATE.setText(st);
                         } else {
                             delay = 1;
-                            LABEL.setForeground(Color.GREEN);
-                            LABEL.setText(" 160×");
+                            String st = " 160×";
+                            stateText = st;
+                            if (showText) {
+                                STATE.setForeground(Color.GREEN);
+                                STATE.setText(st);
+                            }
                         }
                 }
             }
@@ -116,7 +155,7 @@ public class AlgoFrame extends JFrame {
     }
 
     private void adjustTextSize(int textSize) {
-        LABEL.setFont(new Font("楷体", Font.ITALIC, textSize));
+        STATE.setFont(new Font("楷体", Font.ITALIC, textSize));
         for (AlgoCanvas canvas : CANVAS)
             canvas.adjustTextSize(textSize);
     }

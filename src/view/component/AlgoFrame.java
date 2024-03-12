@@ -59,7 +59,7 @@ public class AlgoFrame extends JFrame {
                         }
                     } else {
                         delay = AlgoController.FAST_WARD;
-                        String st = " 16×";
+                        String st = "16×";
                         stateText = st;
                         if (showText) {
                             STATE.setForeground(Color.GREEN);
@@ -92,7 +92,7 @@ public class AlgoFrame extends JFrame {
                     delay = AlgoController.DELAY;//重置播放速度
                     pause = !pause;
                     if (pause) {
-                        String st = " pause";
+                        String st = "pause";
                         stateText = st;
                         if (showText) {
                             STATE.setForeground(Color.RED);
@@ -150,7 +150,7 @@ public class AlgoFrame extends JFrame {
                             STATE.setText(st);
                         } else {
                             delay = 1;
-                            String st = " 160×";
+                            String st = "160×";
                             stateText = st;
                             if (showText) {
                                 STATE.setForeground(Color.GREEN);

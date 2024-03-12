@@ -37,11 +37,20 @@ public class AlgoSupplier {
      * @param scale 计算结果保留的小数位数（四舍五入）
      * @return 卡方值
      */
-    public static BigDecimal chiSquVal(int[] obs, int[] exps, int scale) {
+    public static BigDecimal chiSquVal(int[] obs, BigDecimal[] exps, int scale) {
         BigDecimal res = new BigDecimal(0);
         for (int i = 0; i < exps.length; i++)
-            res = res.add(new BigDecimal(obs[i]).add(new BigDecimal(exps[i]).negate()).pow(2).divide(new BigDecimal(exps[i]), scale, RoundingMode.HALF_UP));
+            res = res.add(new BigDecimal(obs[i]).add(exps[i].negate()).pow(2).divide(exps[i], scale, RoundingMode.HALF_UP));
         return res;
+    }
+
+    public static BigDecimal uDistributeChiSquTest(AlgoArray arr, int testCount) {
+        int n = arr.capacity();
+        BigDecimal[] exps = new BigDecimal[n];
+        BigDecimal exp = new BigDecimal(testCount).divide(new BigDecimal(n), AlgoController.SCALE, RoundingMode.HALF_UP);
+        for (int i = 0, len = exps.length; i < len; i++)
+            exps[i] = exp;
+        return chiSquVal(arr.getEleData(), exps, AlgoController.SCALE);
     }
 
     public static void jdkRan(int tid, AlgoArray arr, int testCount, int scale) {

@@ -1,4 +1,7 @@
 import view.AlgoController;
+import view.AlgoSupplier;
+
+import java.math.BigDecimal;
 
 /**
  * @author MiskuZero

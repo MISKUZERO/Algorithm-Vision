@@ -16,11 +16,11 @@ public class AlgoController {
     //窗口设置
     public static final String TITLE = "**仰望星空**";
     public static final String[] CANVAS_NAMES = {
-            " 线性同余（JDK） + 固定轴",
-            " 线性同余（JDK） + 随机轴",
-            " 平方取中 + 随机轴&聚集相等（三指针）",
-            " 平方取中 + 中值轴&聚集相等（四指针）",
-            " 平方取中 + 归并排序"
+            "线性同余（JDK） + 固定轴",
+            "线性同余（JDK） + 随机轴",
+            "平方取中 + 随机轴&聚集相等（三指针）",
+            "平方取中 + 中值轴&聚集相等（四指针）",
+            "平方取中 + 归并排序"
     };
     public static final int FRAME_WIDTH = 2000;
     public static final int FRAME_HEIGHT = 1000;
@@ -33,11 +33,12 @@ public class AlgoController {
     //画布中最大的正方形棱长（保证是画布是正方形）
     public static final int CANVAS_EDGE = Math.min(FRAME_WIDTH / AlgoSupplier.ceilDiv(CANVAS_COUNT, CANVAS_ROWS), FRAME_HEIGHT / CANVAS_ROWS);
     //数据参数
-    public static final int DATA_LENGTH = 250;//数据长度
-    public static final int SCALE = 5;//增量
+    public static final int DATA_LENGTH = 100;//数据长度
+    public static final int TEST_COUNT = 5000;//重复次数
+    public static final int INCREMENT = 1;//数据的数值增加量（需要卡方检验时增量应该为1，因为数值代表频次）
+    public static final int SCALE = 8;//计算精度
     public static final int DELAY = 160;//延迟（正常播放速度）
     public static final int FAST_WARD = 10;//快进延迟（快进播放速度）
-    public static final int TEST_COUNT = 5000;//重复次数
     //线程相关
     private static final Thread[] THREADS = new Thread[CANVAS_COUNT];
     private static final CountDownLatch LATCH = new CountDownLatch(CANVAS_COUNT);//同步锁
@@ -92,7 +93,7 @@ public class AlgoController {
     private static void run(AlgoData data) throws InterruptedException {
         int tid = 0;
         AlgoArray arr = (AlgoArray) data;
-        AlgoSupplier.jdkRan(tid, arr, TEST_COUNT, SCALE);
+        AlgoSupplier.jdkRan(tid, arr, TEST_COUNT, INCREMENT);
         LATCH.countDown();
         LATCH.await();//等待就绪
         Thread.sleep(3000);
@@ -120,7 +121,7 @@ public class AlgoController {
     private static void run1(AlgoData data) throws InterruptedException {
         int tid = 1;
         AlgoArray arr = (AlgoArray) data;
-        AlgoSupplier.jdkRan(tid, arr, TEST_COUNT, SCALE);
+        AlgoSupplier.jdkRan(tid, arr, TEST_COUNT, INCREMENT);
         LATCH.countDown();
         LATCH.await();//等待就绪
         Thread.sleep(3000);
@@ -147,7 +148,7 @@ public class AlgoController {
     private static void run2(AlgoData data) throws InterruptedException {
         int tid = 2;
         AlgoArray arr = (AlgoArray) data;
-        AlgoSupplier.squMidRan(tid, arr, TEST_COUNT, SCALE);
+        AlgoSupplier.squMidRan(tid, arr, TEST_COUNT, INCREMENT);
         LATCH.countDown();
         LATCH.await();//等待就绪
         Thread.sleep(3000);
@@ -174,7 +175,7 @@ public class AlgoController {
     private static void run3(AlgoData data) throws InterruptedException {
         int tid = 3;
         AlgoArray arr = (AlgoArray) data;
-        AlgoSupplier.squMidRan(tid, arr, TEST_COUNT, SCALE);
+        AlgoSupplier.squMidRan(tid, arr, TEST_COUNT, INCREMENT);
         LATCH.countDown();
         LATCH.await();//等待就绪
         Thread.sleep(3000);
@@ -202,7 +203,7 @@ public class AlgoController {
         int tid = 4;
         AlgoArray arr = (AlgoArray) data;
         AlgoArray tmp = new AlgoArray(DATA_LENGTH);
-        AlgoSupplier.squMidRan(tid, arr, TEST_COUNT, SCALE);
+        AlgoSupplier.squMidRan(tid, arr, TEST_COUNT, INCREMENT);
         LATCH.countDown();
         LATCH.await();//等待就绪
         Thread.sleep(3000);

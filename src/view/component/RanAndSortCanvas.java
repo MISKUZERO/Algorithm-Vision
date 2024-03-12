@@ -1,6 +1,8 @@
 package view.component;
 
 import view.AlgoController;
+import view.AlgoSupplier;
+import view.ChiSquareTable;
 import view.data.AlgoArray;
 import view.data.AlgoData;
 
@@ -8,6 +10,8 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * @author MiskuZero
@@ -19,13 +23,15 @@ public class RanAndSortCanvas extends AlgoCanvas {
     private final BufferedImage bufferedImage;
     private final JLabel title = new JLabel();
     private final JLabel length = new JLabel();
-    private final JLabel value = new JLabel();
+    private final JLabel piVal = new JLabel();
+    private final JLabel chiSquVal = new JLabel();
     private final JLabel sample = new JLabel();
     private final JLabel read = new JLabel();
     private final JLabel write = new JLabel();
     private final String titleText;
-    private final String lenText = " 数据量：" + AlgoController.DATA_LENGTH;
-    private String valText;
+    private String lenText;
+    private String piValText;
+    private String chiSquValText;
     private String samText;
     private String rText;
     private String wText;
@@ -53,33 +59,98 @@ public class RanAndSortCanvas extends AlgoCanvas {
         this.height = height;
         this.titleText = name;
         setLayout(new GridLayout(height / (AlgoController.TEXT_SIZE * 5 / 4), 1));//布局
-        //标签
-        title.setForeground(Color.CYAN);
-        length.setForeground(Color.WHITE);
-        value.setForeground(Color.WHITE);
-        sample.setForeground(Color.WHITE);
-        read.setForeground(Color.WHITE);
-        write.setForeground(Color.WHITE);
-        title.setFont(new Font("楷体", Font.BOLD, AlgoController.TEXT_SIZE));
-        length.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
-        value.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
-        sample.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
-        read.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
-        write.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
-        title.setText(name);
-        length.setText(lenText);
-        add(title);
-        add(length);
-        add(sample);
-        add(value);
-        add(read);
-        add(write);
-        //背景
+        initText();
+        //渲染背景
         bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics graphics = bufferedImage.getGraphics();
         graphics.setColor(Color.GREEN);
         graphics.drawOval(0, 0, AlgoController.CANVAS_EDGE << 1, AlgoController.CANVAS_EDGE << 1);
         setBorder(new LineBorder(Color.BLACK));//边框
+    }
+
+    private void initText() {
+        int capacity = AlgoController.DATA_LENGTH;
+        lenText = "N：" + capacity;
+        switch (capacity) {
+            case 1:
+                lenText += " χ2：" + ChiSquareTable.ALPHA_1[0] +
+                        "(.1) " + ChiSquareTable.ALPHA_05[0] +
+                        "(.05) " + ChiSquareTable.ALPHA_001[0] + "(.005)";
+                break;
+            case 10:
+                lenText += " χ2：" + ChiSquareTable.ALPHA_1[1] +
+                        "(.1) " + ChiSquareTable.ALPHA_05[1] +
+                        "(.05) " + ChiSquareTable.ALPHA_001[1] + "(.005)";
+                break;
+            case 20:
+                lenText += " χ2：" + ChiSquareTable.ALPHA_1[2] +
+                        "(.1) " + ChiSquareTable.ALPHA_05[2] +
+                        "(.05) " + ChiSquareTable.ALPHA_001[2] + "(.005)";
+                break;
+            case 30:
+                lenText += " χ2：" + ChiSquareTable.ALPHA_1[3] +
+                        "(.1) " + ChiSquareTable.ALPHA_05[3] +
+                        "(.05) " + ChiSquareTable.ALPHA_001[3] + "(.005)";
+                break;
+            case 40:
+                lenText += " χ2：" + ChiSquareTable.ALPHA_1[4] +
+                        "(.1) " + ChiSquareTable.ALPHA_05[4] +
+                        "(.05) " + ChiSquareTable.ALPHA_001[4] + "(.005)";
+                break;
+            case 50:
+                lenText += " χ2：" + ChiSquareTable.ALPHA_1[5] +
+                        "(.1) " + ChiSquareTable.ALPHA_05[5] +
+                        "(.05) " + ChiSquareTable.ALPHA_001[5] + "(.005)";
+                break;
+            case 60:
+                lenText += " χ2：" + ChiSquareTable.ALPHA_1[6] +
+                        "(.1) " + ChiSquareTable.ALPHA_05[6] +
+                        "(.05) " + ChiSquareTable.ALPHA_001[6] + "(.005)";
+                break;
+            case 70:
+                lenText += " χ2：" + ChiSquareTable.ALPHA_1[7] +
+                        "(.1) " + ChiSquareTable.ALPHA_05[7] +
+                        "(.05) " + ChiSquareTable.ALPHA_001[7] + "(.005)";
+                break;
+            case 80:
+                lenText += " χ2：" + ChiSquareTable.ALPHA_1[8] +
+                        "(.1) " + ChiSquareTable.ALPHA_05[8] +
+                        "(.05) " + ChiSquareTable.ALPHA_001[8] + "(.005)";
+                break;
+            case 90:
+                lenText += " χ2：" + ChiSquareTable.ALPHA_1[9] +
+                        "(.1) " + ChiSquareTable.ALPHA_05[9] +
+                        "(.05) " + ChiSquareTable.ALPHA_001[9] + "(.005)";
+                break;
+            case 100:
+                lenText += " χ2：" + ChiSquareTable.ALPHA_1[10] +
+                        "(.1) " + ChiSquareTable.ALPHA_05[10] +
+                        "(.05) " + ChiSquareTable.ALPHA_001[10] + "(.005)";
+                break;
+        }
+        title.setForeground(Color.CYAN);
+        length.setForeground(Color.WHITE);
+        piVal.setForeground(Color.WHITE);
+        chiSquVal.setForeground(Color.WHITE);
+        sample.setForeground(Color.WHITE);
+        read.setForeground(Color.WHITE);
+        write.setForeground(Color.WHITE);
+        title.setFont(new Font("楷体", Font.BOLD, AlgoController.TEXT_SIZE));
+        length.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE * 3 / 4));
+        piVal.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
+        chiSquVal.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
+        sample.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
+        read.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
+        write.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
+        title.setText(titleText);
+        length.setText(lenText);
+        add(title);
+        add(length);
+        add(chiSquVal);
+        add(piVal);
+        add(sample);
+        add(read);
+        add(write);
     }
 
     @Override
@@ -148,7 +219,8 @@ public class RanAndSortCanvas extends AlgoCanvas {
 
     @Override
     public void updateData(AlgoData data, Object... args) {
-        this.list = (AlgoArray) data;
+        AlgoArray arr = (AlgoArray) data;
+        this.list = arr;
         if (args.length == 2) {
             int c = ++count;
             int x = (int) args[0], y = (int) args[1];
@@ -156,12 +228,15 @@ public class RanAndSortCanvas extends AlgoCanvas {
             this.y = y;
             if (x * x + y * y < AlgoController.CANVAS_EDGE * AlgoController.CANVAS_EDGE)
                 interCount++;
-            String vt = " π ≈ " + ((double) (interCount << 2) / c);
-            String st = " 样本总数：" + c;
-            valText = vt;
+            String vt = "π ≈ " + new BigDecimal(interCount << 2).divide(new BigDecimal(c), AlgoController.SCALE, RoundingMode.HALF_UP);
+            String st = "抽样次数：" + c;
+            String ct = "卡方值 ≈ " + AlgoSupplier.uDistributeChiSquTest(arr, c);
+            piValText = vt;
+            chiSquValText = ct;
             samText = st;
             if (showText) {
-                value.setText(vt);
+                piVal.setText(vt);
+                chiSquVal.setText(ct);
                 sample.setText(st);
             }
         } else {//第一阶段结束，开始排序
@@ -184,8 +259,8 @@ public class RanAndSortCanvas extends AlgoCanvas {
                 readCount = 0;
                 writeCount = 0;
             }
-            String rt = " 读次数：" + readCount;
-            String wt = " 写次数：" + writeCount;
+            String rt = "读次数：" + readCount;
+            String wt = "写次数：" + writeCount;
             rText = rt;
             wText = wt;
             if (showText) {
@@ -200,8 +275,9 @@ public class RanAndSortCanvas extends AlgoCanvas {
     public void adjustTextSize(int textSize) {
         setLayout(new GridLayout(height / (textSize * 5 / 4), 1));
         title.setFont(new Font("楷体", Font.BOLD, textSize));
-        length.setFont(new Font("楷体", Font.PLAIN, textSize));
-        value.setFont(new Font("楷体", Font.PLAIN, textSize));
+        length.setFont(new Font("楷体", Font.PLAIN, textSize * 3 / 4));
+        piVal.setFont(new Font("楷体", Font.PLAIN, textSize));
+        chiSquVal.setFont(new Font("楷体", Font.PLAIN, textSize));
         sample.setFont(new Font("楷体", Font.PLAIN, textSize));
         read.setFont(new Font("楷体", Font.PLAIN, textSize));
         write.setFont(new Font("楷体", Font.PLAIN, textSize));
@@ -212,7 +288,8 @@ public class RanAndSortCanvas extends AlgoCanvas {
         showText = true;
         title.setText(titleText);
         length.setText(lenText);
-        value.setText(valText);
+        piVal.setText(piValText);
+        chiSquVal.setText(chiSquValText);
         sample.setText(samText);
         read.setText(rText);
         write.setText(wText);
@@ -223,7 +300,8 @@ public class RanAndSortCanvas extends AlgoCanvas {
         showText = false;
         title.setText("");
         length.setText("");
-        value.setText("");
+        piVal.setText("");
+        chiSquVal.setText("");
         sample.setText("");
         read.setText("");
         write.setText("");

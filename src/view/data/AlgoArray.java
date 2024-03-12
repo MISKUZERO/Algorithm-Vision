@@ -7,6 +7,10 @@ public class AlgoArray implements AlgoList<Integer> {
 
     private final int[] eleData;
 
+    public int[] getEleData() {
+        return eleData;
+    }
+
     public AlgoArray() {
         this.eleData = new int[16];
     }

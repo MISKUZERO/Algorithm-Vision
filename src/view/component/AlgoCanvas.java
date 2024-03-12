@@ -32,4 +32,11 @@ public abstract class AlgoCanvas extends JPanel {
      * 关闭文本
      */
     public abstract void closeText();
+
+    /**
+     * 控制是否渲染数据
+     *
+     * @param isRender 是否渲染
+     */
+    public abstract void renderData(boolean isRender);
 }

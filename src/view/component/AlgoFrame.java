@@ -18,14 +18,15 @@ public class AlgoFrame extends JFrame {
     private static int textSize = AlgoController.TEXT_SIZE;
     private static int delay = AlgoController.DELAY;
     private static int mask;
-
     private static boolean pause;
+    private static boolean render;
     private static boolean showText;
 
     public AlgoFrame(String title, Class<? extends AlgoCanvas> canvasClass, int canvasWidth, int canvasHeight, int canvasCount, int canvasRows, String[] names) throws Exception {
         super(title);
-        showText = true;
         stateText = "";
+        render = true;
+        showText = true;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridLayout(canvasRows, 0));
         addCanvas(canvasClass, canvasWidth, canvasHeight, canvasCount, names);
@@ -108,7 +109,7 @@ public class AlgoFrame extends JFrame {
                     }
                     return;
                 }
-                if (keyCode == KeyEvent.VK_DIVIDE) {//数字键盘“除号”打开或关闭文本
+                if (keyCode == KeyEvent.VK_F12) {//F12打开或关闭文本
                     showText = !showText;
                     if (showText) {
                         STATE.setText(stateText);
@@ -119,6 +120,16 @@ public class AlgoFrame extends JFrame {
                         for (AlgoCanvas canvas : CANVAS)
                             canvas.closeText();
                     }
+                    return;
+                }
+                if (keyCode == KeyEvent.VK_F11) {//F11打开或关闭渲染
+                    render = !render;
+                    if (render)
+                        for (AlgoCanvas canvas : CANVAS)
+                            canvas.renderData(true);
+                    else
+                        for (AlgoCanvas canvas : CANVAS)
+                            canvas.renderData(false);
                     return;
                 }
                 if (pause) {
@@ -134,7 +145,7 @@ public class AlgoFrame extends JFrame {
                         STATE.setText(st);
                         return;
                     }
-                    if (keyCode == KeyEvent.VK_MULTIPLY)//数字键盘上的右上角”乘号“满速运行（160倍速）
+                    if (keyCode == KeyEvent.VK_UP)//上箭头满速运行（160倍速）
                         if (delay == 1) {
                             delay = AlgoController.DELAY;
                             String st = "";

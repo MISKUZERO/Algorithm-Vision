@@ -31,6 +31,7 @@ public class RanAndSortCanvas extends AlgoCanvas {
     private String wText;
     private AlgoArray list;
     private boolean showText;
+    private boolean render;
     //随机点坐标
     private int x;
     private int y;
@@ -52,6 +53,7 @@ public class RanAndSortCanvas extends AlgoCanvas {
         this.titleText = name;
         this.lenText = " 数据量：" + AlgoController.DATA_LENGTH;
         this.showText = true;
+        this.render = true;
         this.low = -1;
         this.mid = -1;
         this.high = -1;
@@ -100,33 +102,41 @@ public class RanAndSortCanvas extends AlgoCanvas {
         RenderingHints hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         hints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.addRenderingHints(hints);
-        // 具体绘制
+        // 绘制背景
         Graphics graphics = bufferedImage.getGraphics();
         graphics.setColor(Color.YELLOW);
         graphics.fillRect(x, y, 1, 1);
         int wd = width, h = height;
         g2d.drawImage(bufferedImage, 0, 0, wd, h, null);
-        int capacity = list.capacity();
-        if (capacity == 0) return;
-        int w = wd / capacity;
-        for (int i = 0; i < capacity; i++) {
-            if (i == low)
-                g2d.setColor(Color.RED);
-            else if (i == high)
-                g2d.setColor(Color.CYAN);
-            else if (i == mid)
-                g2d.setColor(Color.YELLOW);
-            else if (i == extra)
-                g2d.setColor(Color.GREEN);
-            else
-                g2d.setColor(Color.GRAY);
-            g2d.fillRect(i * w, h - list.get(i), w - 1, list.get(i));
+        //绘制数据（数组元素数值）
+        if (render) {
+            int capacity = list.capacity();
+            if (capacity == 0) return;
+            int w = wd / capacity;
+            for (int i = 0; i < capacity; i++) {
+                if (i == low)
+                    g2d.setColor(Color.RED);
+                else if (i == high)
+                    g2d.setColor(Color.CYAN);
+                else if (i == mid)
+                    g2d.setColor(Color.YELLOW);
+                else if (i == extra)
+                    g2d.setColor(Color.GREEN);
+                else
+                    g2d.setColor(Color.GRAY);
+                g2d.fillRect(i * w, h - list.get(i), w - 1, list.get(i));
+            }
+            int p = pivot;
+            int ph = h - p;
+            g2d.setColor(Color.WHITE);
+            g2d.drawString("Pivot", 5, ph - 5);
+            g2d.drawLine(0, ph, wd, ph);
         }
-        int p = pivot;
-        int ph = h - p;
-        g2d.setColor(Color.WHITE);
-        g2d.drawString("Pivot", 5, ph - 5);
-        g2d.drawLine(0, ph, wd, ph);
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(width, height);
     }
 
     @Override
@@ -211,8 +221,9 @@ public class RanAndSortCanvas extends AlgoCanvas {
     }
 
     @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(width, height);
+    public void renderData(boolean isRender) {
+        this.render = isRender;
+        repaint();
     }
 
 }

@@ -18,10 +18,12 @@ public class ArrCanvas extends AlgoCanvas {
     private final JLabel title;
     private final String titleText;
     private AlgoArray list;
+    private boolean render;
 
     public ArrCanvas(String name, int width, int height) {
         this.width = width;
         this.height = height;
+        this.render = true;
         setLayout(new GridLayout(height / (AlgoController.TEXT_SIZE * 5 / 4), 1));//布局
         titleText = name;
         title = new JLabel(name);
@@ -42,12 +44,14 @@ public class ArrCanvas extends AlgoCanvas {
         hints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.addRenderingHints(hints);
         // 具体绘制
-        int capacity = list.capacity();
-        if (capacity == 0) return;
-        int w = width / capacity;
-        g2d.setColor(Color.GRAY);
-        for (int i = 0; i < capacity; i++)
-            g2d.fillRect(i * w, height - list.get(i), w - 1, list.get(i));
+        if (render) {
+            int capacity = list.capacity();
+            if (capacity == 0) return;
+            int w = width / capacity;
+            g2d.setColor(Color.GRAY);
+            for (int i = 0; i < capacity; i++)
+                g2d.fillRect(i * w, height - list.get(i), w - 1, list.get(i));
+        }
     }
 
     @Override
@@ -75,6 +79,12 @@ public class ArrCanvas extends AlgoCanvas {
     @Override
     public void closeText() {
         title.setText("");
+    }
+
+    @Override
+    public void renderData(boolean isRender) {
+        this.render = isRender;
+        repaint();
     }
 }
 

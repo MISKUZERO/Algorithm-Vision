@@ -15,4 +15,11 @@ public abstract class AlgoCanvas extends JPanel {
      * @param args 附加参数
      */
     public abstract void updateData(AlgoData data, Object... args);
+
+    /**
+     * 调整字体尺寸
+     *
+     * @param textSize 新的字体大小
+     */
+    public abstract void adjustTextSize(int textSize);
 }

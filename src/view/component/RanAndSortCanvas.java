@@ -16,6 +16,8 @@ public class RanAndSortCanvas extends AlgoCanvas {
 
     private final int width;
     private final int height;
+    private final JLabel title;
+    private final JLabel length;
     private final JLabel value;
     private final JLabel sample;
     private final JLabel read;
@@ -45,10 +47,10 @@ public class RanAndSortCanvas extends AlgoCanvas {
         this.high = -1;
         this.pivot = -100;
         this.extra = -1;
-        setLayout(new GridLayout(height / (AlgoController.CANVAS_TEXT_SIZE * 5 / 4), 1));//布局
+        setLayout(new GridLayout(height / (AlgoController.TEXT_SIZE * 5 / 4), 1));//布局
         //标签
-        JLabel title = new JLabel(name);
-        JLabel length = new JLabel();
+        title = new JLabel(name);
+        length = new JLabel();
         value = new JLabel();
         sample = new JLabel();
         read = new JLabel();
@@ -59,12 +61,12 @@ public class RanAndSortCanvas extends AlgoCanvas {
         sample.setForeground(Color.WHITE);
         read.setForeground(Color.WHITE);
         write.setForeground(Color.WHITE);
-        title.setFont(new Font("楷体", Font.BOLD, AlgoController.CANVAS_TEXT_SIZE));
-        length.setFont(new Font("楷体", Font.PLAIN, AlgoController.CANVAS_TEXT_SIZE));
-        value.setFont(new Font("楷体", Font.PLAIN, AlgoController.CANVAS_TEXT_SIZE));
-        sample.setFont(new Font("楷体", Font.PLAIN, AlgoController.CANVAS_TEXT_SIZE));
-        read.setFont(new Font("楷体", Font.PLAIN, AlgoController.CANVAS_TEXT_SIZE));
-        write.setFont(new Font("楷体", Font.PLAIN, AlgoController.CANVAS_TEXT_SIZE));
+        title.setFont(new Font("楷体", Font.BOLD, AlgoController.TEXT_SIZE));
+        length.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
+        value.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
+        sample.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
+        read.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
+        write.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
         length.setText(" 数据量：" + AlgoController.DATA_LENGTH);
         add(title);
         add(length);
@@ -151,6 +153,17 @@ public class RanAndSortCanvas extends AlgoCanvas {
             write.setText(" 写次数：" + writeCount);
         }
         repaint();
+    }
+
+    @Override
+    public void adjustTextSize(int textSize) {
+        setLayout(new GridLayout(height / (textSize * 5 / 4), 1));
+        title.setFont(new Font("楷体", Font.BOLD, textSize));
+        length.setFont(new Font("楷体", Font.PLAIN, textSize));
+        value.setFont(new Font("楷体", Font.PLAIN, textSize));
+        sample.setFont(new Font("楷体", Font.PLAIN, textSize));
+        read.setFont(new Font("楷体", Font.PLAIN, textSize));
+        write.setFont(new Font("楷体", Font.PLAIN, textSize));
     }
 
     @Override

@@ -24,7 +24,9 @@ public class AlgoController {
     };
     public static final int FRAME_WIDTH = 2000;
     public static final int FRAME_HEIGHT = 1000;
-    public static final int CANVAS_TEXT_SIZE = 20;
+    public static final int TEXT_MIN_SIZE = 16;
+    public static final int TEXT_MAX_SIZE = 40;
+    public static final int TEXT_SIZE = 24;
     public static final int CANVAS_COUNT = 5;
     public static final int CANVAS_ROWS = 2;
     public static final Class<? extends AlgoCanvas> CANVAS_TYPE = RanAndSortCanvas.class;//画布类型

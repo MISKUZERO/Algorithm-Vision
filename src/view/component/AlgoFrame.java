@@ -14,8 +14,10 @@ public class AlgoFrame extends JFrame {
 
     private static final AlgoCanvas[] CANVAS = new AlgoCanvas[AlgoController.CANVAS_COUNT];
     private static final JLabel LABEL = new JLabel();
+    private static int textSize = AlgoController.TEXT_SIZE;
     private static int delay = AlgoController.DELAY;
     private static int mask;
+
     private static boolean pause;
 
     public AlgoFrame(String title, Class<? extends AlgoCanvas> canvasClass, int canvasWidth, int canvasHeight, int canvasCount, int canvasRows, String[] names) throws Exception {
@@ -24,7 +26,7 @@ public class AlgoFrame extends JFrame {
         setLayout(new GridLayout(canvasRows, 0));
         addCanvas(canvasClass, canvasWidth, canvasHeight, canvasCount, names);
         LABEL.setForeground(Color.RED);
-        LABEL.setFont(new Font("楷体", Font.ITALIC, AlgoController.CANVAS_TEXT_SIZE));
+        LABEL.setFont(new Font("楷体", Font.ITALIC, AlgoController.TEXT_SIZE));
         CANVAS[(canvasCount - 1) >> 1].add(LABEL);//显示在中间的画布上
         pack();
         registerListener();
@@ -45,7 +47,8 @@ public class AlgoFrame extends JFrame {
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {//右箭头16倍速快进，暂停模式下长按加快步骤
+                int keyCode = e.getKeyCode();
+                if (keyCode == KeyEvent.VK_RIGHT) {//右箭头16倍速快进，暂停模式下长按加快步骤
                     if (pause) {
                         mask++;
                         if (mask > 1) {//暂停下触发长按，短按则是一步调试
@@ -57,6 +60,18 @@ public class AlgoFrame extends JFrame {
                         LABEL.setForeground(Color.GREEN);
                         LABEL.setText(" 16×");
                     }
+                    return;
+                }
+                if (keyCode == KeyEvent.VK_ADD) {
+                    if (textSize != AlgoController.TEXT_MAX_SIZE)
+                        textSize++;
+                    adjustTextSize(textSize);
+                    return;
+                }
+                if (keyCode == KeyEvent.VK_SUBTRACT) {
+                    if (textSize != AlgoController.TEXT_MIN_SIZE)
+                        textSize--;
+                    adjustTextSize(textSize);
                 }
             }
 
@@ -73,6 +88,7 @@ public class AlgoFrame extends JFrame {
                         LABEL.setText("");
                         AlgoController.resume();
                     }
+                    return;
                 }
                 if (pause) {
                     if (keyCode == KeyEvent.VK_RIGHT) {//右箭头暂停状态下调试功能
@@ -83,8 +99,9 @@ public class AlgoFrame extends JFrame {
                     if (keyCode == KeyEvent.VK_RIGHT) {
                         delay = AlgoController.DELAY;
                         LABEL.setText("");
+                        return;
                     }
-                    if (keyCode == KeyEvent.VK_SUBTRACT)//小键盘上的右上角”减号“满速运行（160倍速）
+                    if (keyCode == KeyEvent.VK_MULTIPLY)//小键盘上的右上角”乘号“满速运行（160倍速）
                         if (delay == 1) {
                             delay = AlgoController.DELAY;
                             LABEL.setText("");
@@ -96,6 +113,12 @@ public class AlgoFrame extends JFrame {
                 }
             }
         });
+    }
+
+    private void adjustTextSize(int textSize) {
+        LABEL.setFont(new Font("楷体", Font.ITALIC, textSize));
+        for (AlgoCanvas canvas : CANVAS)
+            canvas.adjustTextSize(textSize);
     }
 
     public static void updateData(int tid, AlgoData data, Object... args) {

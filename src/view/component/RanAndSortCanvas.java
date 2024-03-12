@@ -17,56 +17,43 @@ public class RanAndSortCanvas extends AlgoCanvas {
     private final int width;
     private final int height;
     private final BufferedImage bufferedImage;
-    private final JLabel title;
-    private final JLabel length;
-    private final JLabel value;
-    private final JLabel sample;
-    private final JLabel read;
-    private final JLabel write;
+    private final JLabel title = new JLabel();
+    private final JLabel length = new JLabel();
+    private final JLabel value = new JLabel();
+    private final JLabel sample = new JLabel();
+    private final JLabel read = new JLabel();
+    private final JLabel write = new JLabel();
     private final String titleText;
-    private final String lenText;
+    private final String lenText = " 数据量：" + AlgoController.DATA_LENGTH;
     private String valText;
     private String samText;
     private String rText;
     private String wText;
     private AlgoArray list;
-    private boolean showText;
-    private boolean render;
     //随机点坐标
-    private int x;
-    private int y;
+    private int x = -100;
+    private int y = -100;
     //统计值
     private int count;
     private int interCount;
     private int readCount;
     private int writeCount;
     //排序标记
-    private int low;
-    private int mid;
-    private int high;
-    private int pivot;
-    private int extra;
+    private int low = -1;
+    private int mid = -1;
+    private int high = -1;
+    private int pivot = -100;
+    private int extra = -1;
+    //控制标记
+    private boolean showText = true;
+    private boolean render = true;
 
     public RanAndSortCanvas(String name, int width, int height) {
         this.width = width;
         this.height = height;
         this.titleText = name;
-        this.lenText = " 数据量：" + AlgoController.DATA_LENGTH;
-        this.showText = true;
-        this.render = true;
-        this.low = -1;
-        this.mid = -1;
-        this.high = -1;
-        this.pivot = -100;
-        this.extra = -1;
         setLayout(new GridLayout(height / (AlgoController.TEXT_SIZE * 5 / 4), 1));//布局
         //标签
-        title = new JLabel(name);
-        length = new JLabel();
-        value = new JLabel();
-        sample = new JLabel();
-        read = new JLabel();
-        write = new JLabel();
         title.setForeground(Color.CYAN);
         length.setForeground(Color.WHITE);
         value.setForeground(Color.WHITE);
@@ -79,6 +66,7 @@ public class RanAndSortCanvas extends AlgoCanvas {
         sample.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
         read.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
         write.setFont(new Font("楷体", Font.PLAIN, AlgoController.TEXT_SIZE));
+        title.setText(name);
         length.setText(lenText);
         add(title);
         add(length);
@@ -103,16 +91,35 @@ public class RanAndSortCanvas extends AlgoCanvas {
         hints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.addRenderingHints(hints);
         // 绘制背景
-        Graphics graphics = bufferedImage.getGraphics();
-        graphics.setColor(Color.YELLOW);
-        graphics.fillRect(x, y, 1, 1);
-        int wd = width, h = height;
-        g2d.drawImage(bufferedImage, 0, 0, wd, h, null);
+        int x = this.x, y = this.y;
+        BufferedImage bi = bufferedImage;
+        Graphics graphics = bi.getGraphics();
+        if (x >= 0 && y >= 0) {
+            int rgb = bi.getRGB(x, y);//获取坐标位置的颜色值
+            //排除背景色的干扰
+            if (rgb == Color.BLACK.getRGB() || rgb == Color.GREEN.getRGB())
+                graphics.setColor(Color.YELLOW);//黄色值十六进制数：0xffffff00
+            else {
+                int newRgb = rgb + 50;
+            /*
+            色阶变化6档：（纯黄色）0xffffff00 ~ （接近白色）0xfffffffa
+            每次加50后比较最后一位字节是否溢出
+            若溢出，则颜色值停留在0xfffffffa
+            */
+                if ((newRgb & 0x000000ff) < (rgb & 0x000000ff))
+                    graphics.setColor(new Color(rgb));
+                else
+                    graphics.setColor(new Color(newRgb));
+            }
+            graphics.fillRect(x, y, 1, 1);
+        }
+        int width = this.width, height = this.height;
+        g2d.drawImage(bi, 0, 0, width, height, null);
         //绘制数据（数组元素数值）
         if (render) {
             int capacity = list.capacity();
             if (capacity == 0) return;
-            int w = wd / capacity;
+            int w = width / capacity;
             for (int i = 0; i < capacity; i++) {
                 if (i == low)
                     g2d.setColor(Color.RED);
@@ -124,13 +131,13 @@ public class RanAndSortCanvas extends AlgoCanvas {
                     g2d.setColor(Color.GREEN);
                 else
                     g2d.setColor(Color.GRAY);
-                g2d.fillRect(i * w, h - list.get(i), w - 1, list.get(i));
+                g2d.fillRect(i * w, height - list.get(i), w - 1, list.get(i));
             }
             int p = pivot;
-            int ph = h - p;
+            int ph = height - p;
             g2d.setColor(Color.WHITE);
             g2d.drawString("Pivot", 5, ph - 5);
-            g2d.drawLine(0, ph, wd, ph);
+            g2d.drawLine(0, ph, width, ph);
         }
     }
 
@@ -157,7 +164,9 @@ public class RanAndSortCanvas extends AlgoCanvas {
                 value.setText(vt);
                 sample.setText(st);
             }
-        } else {
+        } else {//第一阶段结束，开始排序
+            this.x = -100;
+            this.y = -100;
             low = (int) args[0];
             mid = (int) args[1];
             high = (int) args[2];

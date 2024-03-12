@@ -17,13 +17,12 @@ public class ArrCanvas extends AlgoCanvas {
     private final int height;
     private final JLabel title;
     private final String titleText;
+    private boolean render = true;
     private AlgoArray list;
-    private boolean render;
 
     public ArrCanvas(String name, int width, int height) {
         this.width = width;
         this.height = height;
-        this.render = true;
         setLayout(new GridLayout(height / (AlgoController.TEXT_SIZE * 5 / 4), 1));//布局
         titleText = name;
         title = new JLabel(name);

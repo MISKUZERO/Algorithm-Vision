@@ -14,19 +14,16 @@ public class AlgoFrame extends JFrame {
 
     private static final AlgoCanvas[] CANVAS = new AlgoCanvas[AlgoController.CANVAS_COUNT];
     private static final JLabel STATE = new JLabel();
-    private static String stateText;
+    private static String stateText = "";
     private static int textSize = AlgoController.TEXT_SIZE;
     private static int delay = AlgoController.DELAY;
     private static int mask;
     private static boolean pause;
-    private static boolean render;
-    private static boolean showText;
+    private static boolean render = true;
+    private static boolean showText = true;
 
     public AlgoFrame(String title, Class<? extends AlgoCanvas> canvasClass, int canvasWidth, int canvasHeight, int canvasCount, int canvasRows, String[] names) throws Exception {
         super(title);
-        stateText = "";
-        render = true;
-        showText = true;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridLayout(canvasRows, 0));
         addCanvas(canvasClass, canvasWidth, canvasHeight, canvasCount, names);
